@@ -1,57 +1,109 @@
+
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
+#include <string>
+
 using namespace std;
 using namespace sf;
 
-class Spaceship
+class Picture
 {
-    RectangleShape spaceship;
 
 public:
-    Spaceship(RenderWindow& window)
+    Picture(std::string filePath)
     {
-        spaceship.setSize(Vector2f(window.getSize().x * 0.082, window.getSize().y * 0.134));
-        spaceship.setFillColor(Color::Green);
-        spaceship.setPosition((window.getSize().x / 2) - 50, window.getSize().y - 100);
+        texture.loadFromFile(filePath);
+        sprite.setTexture(texture);
     }
-    RectangleShape getSpaceship()
+
+    void setScale(sf::Vector2f scale)
     {
-        return spaceship;
+
+        sf::Vector2f Aspectratio(scale.x / texture.getSize().x, scale.y / texture.getSize().y);
+        sprite.setScale(Aspectratio);
     }
-    bool checkleft(RectangleShape& ship, double move)
+    void setPosition(sf::Vector2f position)
     {
-        return ship.getPosition().x - move > 0;
+
+        sprite.setPosition(position);
     }
-    bool checkright(RectangleShape& ship, RenderWindow& window, double move)
+    void drawTo(sf::RenderWindow &window)
     {
-        return ship.getPosition().x + move < window.getSize().x - 100;
+
+        window.draw(sprite);
     }
-    bool checkUp(RectangleShape& ship, double move)
-    {
-        return ship.getPosition().y - move > 0;
+    Vector2f getPosition() {
+        return sprite.getPosition();
     }
-    bool checkdown(RectangleShape& ship, RenderWindow& window, double move)
+    Vector2f getSize() {
+        return sprite.getScale();
+    }
+    
+    void move(double x, double y) {
+        sprite.move(x,y);
+    }
+    FloatRect getGlobalBounds() {
+        return sprite.getGlobalBounds();
+    }
+    
+private:
+    sf::Texture texture;
+    sf::Sprite sprite;
+};
+
+class Spaceship
+{   
+    Picture spaceship;
+public:
+    Spaceship(RenderWindow& window): spaceship("R (1).png")
     {
-        return ship.getPosition().y + move < window.getSize().y - 100;
+        spaceship.setScale(Vector2f(window.getSize().x * 0.082, window.getSize().y * 0.134));
+        spaceship.setPosition(Vector2f((window.getSize().x / 2) - 50, window.getSize().y - 100));
+    }
+    bool checkleft(double move)
+    {
+        return spaceship.getPosition().x - move > 0;
+    }
+    bool checkright(RenderWindow &window, double move)
+    {
+        return spaceship.getPosition().x + move < window.getSize().x - 100;
+    }
+    bool checkUp(double move)
+    {
+        return spaceship.getPosition().y - move > 0;
+    }
+    bool checkdown(RenderWindow &window, double move)
+    {
+        return spaceship.getPosition().y + move < window.getSize().y - 100;
+    }
+    void drawTo(RenderWindow &window) {
+        spaceship.drawTo(window);
+    }
+    Vector2f getPosition() {
+        return spaceship.getPosition();
+    }
+    Vector2f getSize() {
+        return spaceship.getSize();
+    }
+    void move(double x, double y) {
+        spaceship.move(x,y);
+    }
+    FloatRect getGlobalBounds() {
+        return spaceship.getGlobalBounds();
     }
 };
 
 class Asteroid
 {
-    RectangleShape asteroid;
+    Picture asteroid;
 
 public:
-    Asteroid(RenderWindow& window)
+    Asteroid(RenderWindow& window): asteroid("R (2).png")
     {
         float size = (float)rand() / RAND_MAX * 20 + 10;
-        asteroid.setSize(Vector2f(size, size));
-        asteroid.setFillColor(Color::White);
-        asteroid.setPosition((float)rand() / RAND_MAX * window.getSize().x, -size);
-    }
-    RectangleShape getAsteroid()
-    {
-        return asteroid;
+        asteroid.setScale(Vector2f(size, size));
+        asteroid.setPosition(Vector2f((float)rand() / RAND_MAX * window.getSize().x, -size));
     }
     void move(RenderWindow& window)
     {
@@ -60,22 +112,36 @@ public:
         if (asteroid.getPosition().y > window.getSize().y)
         {
             float size = (float)rand() / RAND_MAX * 20 + 10;
-            asteroid.setSize(Vector2f(size, size));
-            asteroid.setPosition((float)rand() / RAND_MAX * window.getSize().x, -size);
+            asteroid.setScale(Vector2f(size, size));
+            asteroid.setPosition(Vector2f((float)rand() / RAND_MAX * window.getSize().x, -size));
         }
+    }
+    void drawTo(RenderWindow &window) {
+        asteroid.drawTo(window);
+    }
+    Vector2f getPosition() {
+        return asteroid.getPosition();
+    }
+    Vector2f getSize() {
+        return asteroid.getSize();
+    }
+    // void move(double x, double y) {
+    //     asteroid.move(x,y);
+    // }
+    FloatRect getGlobalBounds() {
+        return asteroid.getGlobalBounds();
     }
 };
 
 int main()
 {
     RenderWindow window(VideoMode::getDesktopMode(), "Space invader", Style::Close | Style::Fullscreen);
-    Spaceship s(window);
+    Spaceship spaceship(window);
     Clock clock;
     Vector2f bulletSize = Vector2f(window.getSize().x * 0.01239, window.getSize().y * 0.04103);
     RectangleShape bullet(bulletSize);
     bullet.setFillColor(Color::Red);
     double movement = window.getSize().x * window.getSize().y * 0.0000039;
-    RectangleShape spaceship = s.getSpaceship();
     vector<RectangleShape> bullets;
     vector<Asteroid> asteroids;
     Clock asteroidClock;
@@ -91,9 +157,7 @@ int main()
                 window.close();
             }
         }
-        if (event.type == Event::MouseButtonPressed && (clock.getElapsedTime().asSeconds() > 1 || a))
-        {
-            if (event.key.code == Mouse::Left)
+            if (event.key.code == Keyboard::Space && (clock.getElapsedTime().asSeconds() > 1 || a))
             {
                 bullet.setPosition(spaceship.getPosition().x + (spaceship.getSize().x / 2) - (bullet.getSize().x / 2), spaceship.getPosition().y);
                 bullets.push_back(bullet);
@@ -102,25 +166,23 @@ int main()
                 clock.restart();
                 a = false;
             }
-        }
-        if (Keyboard::isKeyPressed(Keyboard::A) && s.checkleft(spaceship, movement))
+        else if (Keyboard::isKeyPressed(Keyboard::A) && spaceship.checkleft(movement))
         {
             spaceship.move(-1 * movement, 0);
         }
-        else if (Keyboard::isKeyPressed(Keyboard::D) && s.checkright(spaceship, window, movement))
+        else if (Keyboard::isKeyPressed(Keyboard::D) && spaceship.checkright(window, movement))
         {
             spaceship.move(movement, 0);
         }
-        else if (Keyboard::isKeyPressed(Keyboard::W) && s.checkUp(spaceship, movement))
+        else if (Keyboard::isKeyPressed(Keyboard::W) && spaceship.checkUp(movement))
         {
             spaceship.move(0, -1 * movement);
         }
-        else if (Keyboard::isKeyPressed(Keyboard::S) && s.checkdown(spaceship, window, movement))
+        else if (Keyboard::isKeyPressed(Keyboard::S) && spaceship.checkdown(window, movement))
         {
             spaceship.move(0, movement);
         }
         window.clear();
-        window.draw(spaceship);
         for (int i = 0; i < bullets.size(); i++)
         {
             if (bullets[i].getPosition().y < 0)
@@ -133,21 +195,21 @@ int main()
         for (int i = 0; i < asteroids.size(); i++)
         {
             asteroids[i].move(window);
-            window.draw(asteroids[i].getAsteroid());
+            asteroids[i].drawTo(window);
 
-            if (spaceship.getGlobalBounds().intersects(asteroids[i].getAsteroid().getGlobalBounds()))
+            if (spaceship.getGlobalBounds().intersects(asteroids[i].getGlobalBounds()))
             {
                 cout << "Game Over!" << endl;
                 window.close();
             }
 
-            if (asteroids[i].getAsteroid().getPosition().y > window.getSize().y)
+            if (asteroids[i].getPosition().y > window.getSize().y)
             {
                 asteroids.erase(asteroids.begin() + i);
             }
 
             for (int j = 0; j < bullets.size(); j++) {
-                if (asteroids[i].getAsteroid().getGlobalBounds().intersects(bullets[j].getGlobalBounds())) {
+                if (asteroids[i].getGlobalBounds().intersects(bullets[j].getGlobalBounds())) {
                     asteroids.erase(asteroids.begin() + i);
                     bullets.erase(bullets.begin() + j);
                 }
@@ -161,6 +223,7 @@ int main()
             asteroidClock.restart();
         }
 
+        spaceship.drawTo(window);
         window.display();
     }
     return 0;
