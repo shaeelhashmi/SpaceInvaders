@@ -9,90 +9,6 @@ using namespace sf;
 
 class Picture
 {
-<<<<<<< HEAD
-
-public:
-    Picture(std::string filePath)
-    {
-        texture.loadFromFile(filePath);
-        sprite.setTexture(texture);
-    }
-
-    void setScale(sf::Vector2f scale)
-    {
-
-        sf::Vector2f Aspectratio(scale.x / texture.getSize().x, scale.y / texture.getSize().y);
-        sprite.setScale(Aspectratio);
-    }
-    void setPosition(sf::Vector2f position)
-    {
-
-        sprite.setPosition(position);
-    }
-    void drawTo(sf::RenderWindow &window)
-    {
-
-        window.draw(sprite);
-    }
-    Vector2f getPosition() {
-        return sprite.getPosition();
-    }
-    Vector2f getSize() {
-        return sprite.getScale();
-    }
-    
-    void move(double x, double y) {
-        sprite.move(x,y);
-    }
-    FloatRect getGlobalBounds() {
-        return sprite.getGlobalBounds();
-    }
-    
-private:
-    sf::Texture texture;
-    sf::Sprite sprite;
-};
-
-class Spaceship
-{   
-    Picture spaceship;
-public:
-    Spaceship(RenderWindow& window): spaceship("R (1).png")
-    {
-        spaceship.setScale(Vector2f(window.getSize().x * 0.082, window.getSize().y * 0.134));
-        spaceship.setPosition(Vector2f((window.getSize().x / 2) - 50, window.getSize().y - 100));
-    }
-    bool checkleft(double move)
-    {
-        return spaceship.getPosition().x - move > 0;
-    }
-    bool checkright(RenderWindow &window, double move)
-    {
-        return spaceship.getPosition().x + move < window.getSize().x - 100;
-    }
-    bool checkUp(double move)
-    {
-        return spaceship.getPosition().y - move > 0;
-    }
-    bool checkdown(RenderWindow &window, double move)
-    {
-        return spaceship.getPosition().y + move < window.getSize().y - 100;
-    }
-    void drawTo(RenderWindow &window) {
-        spaceship.drawTo(window);
-    }
-    Vector2f getPosition() {
-        return spaceship.getPosition();
-    }
-    Vector2f getSize() {
-        return spaceship.getSize();
-    }
-    void move(double x, double y) {
-        spaceship.move(x,y);
-    }
-    FloatRect getGlobalBounds() {
-        return spaceship.getGlobalBounds();
-=======
 public:
     Picture(string filePath)
     {
@@ -124,7 +40,6 @@ public:
     }
     Vector2f getposition() {
         return sprite.getPosition();
->>>>>>> 62d7cbb (Added textures to asteroids and bullets)
     }
     Vector2f getSize() {    
         return sprite.getScale();
@@ -188,15 +103,6 @@ public:
 class Asteroid
 {
     Picture asteroid;
-<<<<<<< HEAD
-
-public:
-    Asteroid(RenderWindow& window): asteroid("R (2).png")
-    {
-        float size = (float)rand() / RAND_MAX * 20 + 10;
-        asteroid.setScale(Vector2f(size, size));
-        asteroid.setPosition(Vector2f((float)rand() / RAND_MAX * window.getSize().x, -size));
-=======
 public:
     Asteroid(RenderWindow& window,string Filepath): asteroid(Filepath)
     {
@@ -207,20 +113,11 @@ public:
     void SetTexture(string filePath)
     {
         asteroid.SetTexture(filePath);
->>>>>>> 62d7cbb (Added textures to asteroids and bullets)
     }
     void move(RenderWindow& window)
     {
         float speed = 1.0f;
         asteroid.move(0, speed);
-<<<<<<< HEAD
-        if (asteroid.getPosition().y > window.getSize().y)
-        {
-            float size = (float)rand() / RAND_MAX * 20 + 10;
-            asteroid.setScale(Vector2f(size, size));
-            asteroid.setPosition(Vector2f((float)rand() / RAND_MAX * window.getSize().x, -size));
-        }
-=======
     }
     void drawTo(RenderWindow &window) {
         asteroid.drawTo(window);
@@ -268,22 +165,6 @@ public:
     }
     void SetPosition(float x, float y) {
         bullet.setposition(Vector2f(x, y));
->>>>>>> 62d7cbb (Added textures to asteroids and bullets)
-    }
-    void drawTo(RenderWindow &window) {
-        asteroid.drawTo(window);
-    }
-    Vector2f getPosition() {
-        return asteroid.getPosition();
-    }
-    Vector2f getSize() {
-        return asteroid.getSize();
-    }
-    // void move(double x, double y) {
-    //     asteroid.move(x,y);
-    // }
-    FloatRect getGlobalBounds() {
-        return asteroid.getGlobalBounds();
     }
 };
 int main()
@@ -293,11 +174,7 @@ int main()
     Clock clock;
     Bullets bullet(window);
     double movement = window.getSize().x * window.getSize().y * 0.0000039;
-<<<<<<< HEAD
-    vector<RectangleShape> bullets;
-=======
     vector<Bullets> bullets;
->>>>>>> 62d7cbb (Added textures to asteroids and bullets)
     vector<Asteroid> asteroids;
     Clock asteroidClock;
     bool a = true;
@@ -313,7 +190,7 @@ int main()
         }
             if (event.key.code == Keyboard::Space && (clock.getElapsedTime().asSeconds() > 1 || a))
             {
-                bullet.SetPosition(spaceship.getPosition().x + (100/ 2) - (bullet.getSize().x / 2)-10, spaceship.getPosition().y-bullet.getSize().y);
+                bullet.SetPosition(spaceship.getPosition().x + (100/ 2) - (bullet.getSize().x / 2)-10, spaceship.getPosition().y-10);
                 bullets.push_back(bullet);
                 bullet.drawTo(window);
                 window.display();
@@ -354,11 +231,6 @@ bullets[i].move(0, window.getSize().y * -0.00133);
         {
             asteroids[i].drawTo(window);
             asteroids[i].move(window);
-<<<<<<< HEAD
-            asteroids[i].drawTo(window);
-
-=======
->>>>>>> 62d7cbb (Added textures to asteroids and bullets)
             if (spaceship.getGlobalBounds().intersects(asteroids[i].getGlobalBounds()))
             {
                 cout << "Game Over!" << endl;
@@ -385,14 +257,8 @@ bullets[i].move(0, window.getSize().y * -0.00133);
             asteroids[asteroids.size() - 1].SetTexture("Asteroid.png");
             asteroidClock.restart();
         }
-<<<<<<< HEAD
-
-        spaceship.drawTo(window);
-        window.display();
-=======
     spaceship.drawTo(window);
     window.display();
->>>>>>> 62d7cbb (Added textures to asteroids and bullets)
     }
     return 0;
 }
