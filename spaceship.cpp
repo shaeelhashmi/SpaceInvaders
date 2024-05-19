@@ -1,12 +1,9 @@
-
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
 #include <string>
-
 using namespace std;
 using namespace sf;
-
 class Picture
 {
 public:
@@ -66,7 +63,7 @@ public:
     Spaceship(RenderWindow& window): spaceship("Spaceship.png")
     {
         spaceship.setscale(Vector2f(window.getSize().x * 0.082, window.getSize().y * 0.134));
-        spaceship.setposition(Vector2f((window.getSize().x / 2) - 100, window.getSize().y - 111));
+        spaceship.setposition(Vector2f((window.getSize().x / 2) - 100, window.getSize().y - 115));
     }
     bool checkleft(double move)
     {
@@ -104,11 +101,22 @@ class Asteroid
 {
     Picture asteroid;
 public:
-    Asteroid(RenderWindow& window,string Filepath): asteroid(Filepath)
+    Asteroid(RenderWindow& window,string Filepath,double Corners): asteroid(Filepath)
     {
-        float size = (float)rand() / RAND_MAX * 20 + 10;
-        asteroid.setscale(Vector2f(size, size));
+        int size = (RAND_MAX % 2)+1;
+        
+        asteroid.setscale(Vector2f(30*size, 30*size));
         asteroid.setposition(Vector2f((float)rand() / RAND_MAX * window.getSize().x, -size));
+        if ((asteroid.getposition().x + Corners < window.getSize().x/2 ))
+        {
+
+            asteroid.move(Corners, 0);
+        }
+        else
+        {
+            asteroid.move(-1*Corners, 0);
+        }
+     
     }
     void SetTexture(string filePath)
     {
@@ -116,7 +124,7 @@ public:
     }
     void move(RenderWindow& window)
     {
-        float speed = 1.0f;
+        double speed = 0.00000097*window.getSize().y*window.getSize().x*2;
         asteroid.move(0, speed);
     }
     void drawTo(RenderWindow &window) {
@@ -128,9 +136,6 @@ public:
     Vector2f getSize() {
         return asteroid.getSize();
     }
-    // void move(double x, double y) {
-    //     asteroid.move(x,y);
-    // }
     FloatRect getGlobalBounds() {
         return asteroid.getGlobalBounds();
     }
@@ -139,9 +144,9 @@ class Bullets
 {
     Picture bullet;
 public: 
-    Bullets(RenderWindow& window): bullet("Bullets.png")
+    Bullets(RenderWindow& window): bullet("bullets.png")
     {
-        bullet.setscale(Vector2f(window.getSize().x * 0.01239*2, window.getSize().y * 0.04103));
+        bullet.setscale(Vector2f(window.getSize().x * 0.01239, window.getSize().y * 0.04103));
     }
     void move(RenderWindow& window)
     {
@@ -170,10 +175,11 @@ public:
 int main()
 {
     RenderWindow window(VideoMode::getDesktopMode(), "Space invader", Style::Close | Style::Fullscreen);
+    window.setFramerateLimit(60);
     Spaceship spaceship(window);
     Clock clock;
     Bullets bullet(window);
-    double movement = window.getSize().x * window.getSize().y * 0.0000039;
+    double movement = window.getSize().x * window.getSize().y * 0.0000039*2;
     vector<Bullets> bullets;
     vector<Asteroid> asteroids;
     Clock asteroidClock;
@@ -203,6 +209,7 @@ int main()
         }
         else if (Keyboard::isKeyPressed(Keyboard::D) && spaceship.checkright(window, movement))
         {
+
             spaceship.move(movement, 0);
         }
         else if (Keyboard::isKeyPressed(Keyboard::W) && spaceship.checkUp(movement))
@@ -222,15 +229,16 @@ int main()
             }
             else
             {
-bullets[i].move(0, window.getSize().y * -0.00133);
+           bullets[i].move(0, window.getSize().y * -0.00133*2);
             bullets[i].drawTo(window);
             }
             
         }
         for (int i = 0; i < asteroids.size(); i++)
         {
-            asteroids[i].drawTo(window);
+            asteroids[i].SetTexture("Asteroid.png");
             asteroids[i].move(window);
+            asteroids[i].drawTo(window);
             if (spaceship.getGlobalBounds().intersects(asteroids[i].getGlobalBounds()))
             {
                 cout << "Game Over!" << endl;
@@ -244,17 +252,18 @@ bullets[i].move(0, window.getSize().y * -0.00133);
 
             for (int j = 0; j < bullets.size(); j++) {
                 if (asteroids[i].getGlobalBounds().intersects(bullets[j].getGlobalBounds())) {
+                    asteroids[i].SetTexture("AsteroidDestructions.png");
+                    asteroids[i].drawTo(window);
+                    window.display();   
                     asteroids.erase(asteroids.begin() + i);
                     bullets.erase(bullets.begin() + j);
                 }
             }
         }
-
         if (asteroidClock.getElapsedTime().asSeconds() > 3.0f)
         {
-            Asteroid as(window,"Asteroid.png");
+            Asteroid as(window,"Asteroid.png",spaceship.getSize().x);
             asteroids.push_back(as);
-            asteroids[asteroids.size() - 1].SetTexture("Asteroid.png");
             asteroidClock.restart();
         }
     spaceship.drawTo(window);
