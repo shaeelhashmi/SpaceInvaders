@@ -2,10 +2,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
-
 using namespace std;
 using namespace sf;
-
 class Picture {
     public:
     Picture(string filePath) {
@@ -90,7 +88,6 @@ class Spaceship {
 };
 class Asteroid {
     Picture asteroid;
-
     public:
     Asteroid(RenderWindow& window, string Filepath, double Corners) : asteroid(Filepath) {
         int size = (RAND_MAX % 2) + 1;
@@ -124,6 +121,7 @@ class Asteroid {
     FloatRect getGlobalBounds() {
         return asteroid.getGlobalBounds();
     }
+ 
 };
 class Bullets {
     Picture bullet;
@@ -164,9 +162,18 @@ int main() {
     double movement = window.getSize().x * window.getSize().y * 0.0000039 * 2;
     vector<Bullets> bullets;
     vector<Asteroid> asteroids;
+    //This array will store the exploded array
+    vector<Asteroid> explodedAsteroids;
+    //This vector will store the time for each exploded asteroid
+    vector<Clock> explodedAsteroidsTime;
+    //this will be increased for every asteroid destroyed
+    int multiplier = 1;
+    //The clock for the multiplier to end
+    Clock endMultiplier;
     Clock asteroidClock;
     bool a = true;
     while (window.isOpen()) {
+      
         Event event;
         while (window.pollEvent(event)) {
             if (event.type == Event::Closed) {
@@ -195,6 +202,10 @@ int main() {
         else if (Keyboard::isKeyPressed(Keyboard::S) && spaceship.checkdown(window, movement)) {
             spaceship.move(0, movement);
         }
+        //This condition will check if the multiplier has ended
+        if(endMultiplier.getElapsedTime().asSeconds() > 3){
+            multiplier = 1;
+        }
         window.clear();
         for (int i = 0; i < bullets.size(); i++) {
             if (bullets[i].getPosition().y < 0) {
@@ -220,11 +231,15 @@ int main() {
 
             for (int j = 0; j < bullets.size(); j++) {
                 if (asteroids[i].getGlobalBounds().intersects(bullets[j].getGlobalBounds())) {
+                    Clock c;
                     asteroids[i].SetTexture("AsteroidDestructions.png");
-                    asteroids[i].drawTo(window);
-                    window.display();
+                    explodedAsteroids.push_back(asteroids[i]);
+                    explodedAsteroidsTime.push_back(c);
                     asteroids.erase(asteroids.begin() + i);
                     bullets.erase(bullets.begin() + j);
+                    multiplier++;
+                    endMultiplier.restart();
+                    cout<<"Multiplier: "<<multiplier<<endl;
                 }
             }
         }
@@ -232,6 +247,16 @@ int main() {
             Asteroid as(window, "Asteroid.png", spaceship.getSize().x);
             asteroids.push_back(as);
             asteroidClock.restart();
+        }
+          for(int i=0;i<explodedAsteroids.size();i++){
+            if(explodedAsteroidsTime[i].getElapsedTime().asSeconds() > 1){
+                explodedAsteroids.erase(explodedAsteroids.begin() + i);
+                explodedAsteroidsTime.erase(explodedAsteroidsTime.begin() + i);
+            }
+            else{
+                explodedAsteroids[i].SetTexture("AsteroidDestructions.png");
+                explodedAsteroids[i].drawTo(window);
+            }
         }
         spaceship.drawTo(window);
         window.display();
