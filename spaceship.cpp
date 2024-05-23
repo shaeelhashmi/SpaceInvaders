@@ -2,8 +2,10 @@
 #include <iostream>
 #include <vector>
 #include <string>
+
 using namespace std;
 using namespace sf;
+
 class Picture {
     public:
     Picture(string filePath) {
@@ -14,7 +16,7 @@ class Picture {
         texture.loadFromFile(filePath);
         sprite.setTexture(texture);
     }
-    void setscale(sf::Vector2f scale) {
+    void setScale(sf::Vector2f scale) {
         scale.x = std::max(scale.x, 0.1f); // Minimum scale to avoid division by zero
         scale.y = std::max(scale.y, 0.1f);
         // Calculate aspect ratio
@@ -23,13 +25,13 @@ class Picture {
         // Set scale of sprite
         sprite.setScale(Aspectratio);
     }
-    void setposition(sf::Vector2f position) {
+    void setPosition(sf::Vector2f position) {
         sprite.setPosition(position);
     }
     void drawTo(sf::RenderWindow& window) {
         window.draw(sprite);
     }
-    Vector2f getposition() {
+    Vector2f getPosition() {
         return sprite.getPosition();
     }
     Vector2f getSize() {
@@ -55,26 +57,26 @@ class Spaceship {
 
     public:
     Spaceship(RenderWindow& window) : spaceship("Spaceship.png") {
-        spaceship.setscale(Vector2f(window.getSize().x * 0.082, window.getSize().y * 0.134));
-        spaceship.setposition(Vector2f((window.getSize().x / 2) - 100, window.getSize().y - 115));
+        spaceship.setScale(Vector2f(window.getSize().x * 0.082, window.getSize().y * 0.134));
+        spaceship.setPosition(Vector2f((window.getSize().x / 2) - 100, window.getSize().y - 115));
     }
     bool checkleft(double move) {
-        return spaceship.getposition().x - move > 0;
+        return spaceship.getPosition().x - move > 0;
     }
     bool checkright(RenderWindow& window, double move) {
-        return spaceship.getposition().x + move < window.getSize().x - 100;
+        return spaceship.getPosition().x + move < window.getSize().x - 100;
     }
     bool checkUp(double move) {
-        return spaceship.getposition().y - move > 0;
+        return spaceship.getPosition().y - move > 0;
     }
     bool checkdown(RenderWindow& window, double move) {
-        return spaceship.getposition().y + move < window.getSize().y - 111;
+        return spaceship.getPosition().y + move < window.getSize().y - 111;
     }
     void drawTo(RenderWindow& window) {
         spaceship.drawTo(window);
     }
     Vector2f getPosition() {
-        return spaceship.getposition();
+        return spaceship.getPosition();
     }
     Vector2f getSize() {
         return spaceship.getSize();
@@ -88,13 +90,14 @@ class Spaceship {
 };
 class Asteroid {
     Picture asteroid;
+
     public:
     Asteroid(RenderWindow& window, string Filepath, double Corners) : asteroid(Filepath) {
         int size = (RAND_MAX % 2) + 1;
 
-        asteroid.setscale(Vector2f(30 * size, 30 * size));
-        asteroid.setposition(Vector2f((float)rand() / RAND_MAX * window.getSize().x, -size));
-        if ((asteroid.getposition().x + Corners < window.getSize().x / 2)) {
+        asteroid.setScale(Vector2f(30 * size, 30 * size));
+        asteroid.setPosition(Vector2f((float)rand() / RAND_MAX * window.getSize().x, -size));
+        if ((asteroid.getPosition().x + Corners < window.getSize().x / 2)) {
 
             asteroid.move(Corners, 0);
         }
@@ -113,7 +116,7 @@ class Asteroid {
         asteroid.drawTo(window);
     }
     Vector2f getPosition() {
-        return asteroid.getposition();
+        return asteroid.getPosition();
     }
     Vector2f getSize() {
         return asteroid.getSize();
@@ -121,14 +124,14 @@ class Asteroid {
     FloatRect getGlobalBounds() {
         return asteroid.getGlobalBounds();
     }
- 
+
 };
 class Bullets {
     Picture bullet;
 
     public:
     Bullets(RenderWindow& window) : bullet("bullets.png") {
-        bullet.setscale(Vector2f(window.getSize().x * 0.01239, window.getSize().y * 0.04103));
+        bullet.setScale(Vector2f(window.getSize().x * 0.01239, window.getSize().y * 0.04103));
     }
     void move(RenderWindow& window) {
         float speed = 1.0f;
@@ -138,7 +141,7 @@ class Bullets {
         bullet.drawTo(window);
     }
     Vector2f getPosition() {
-        return bullet.getposition();
+        return bullet.getPosition();
     }
     Vector2f getSize() {
         return bullet.getSize();
@@ -150,16 +153,21 @@ class Bullets {
         return bullet.getGlobalBounds();
     }
     void SetPosition(float x, float y) {
-        bullet.setposition(Vector2f(x, y));
+        bullet.setPosition(Vector2f(x, y));
     }
 };
 int main() {
     RenderWindow window(VideoMode::getDesktopMode(), "Space invader", Style::Close | Style::Fullscreen);
     window.setFramerateLimit(60);
     Spaceship spaceship(window);
-    Clock clock;
     Bullets bullet(window);
-    double movement = window.getSize().x * window.getSize().y * 0.0000039 * 2;
+    Picture hearts[5] = { Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png") };
+
+    Clock clock;
+    //The clock for the multiplier to end
+    Clock endMultiplier;
+    Clock asteroidClock;
+
     vector<Bullets> bullets;
     vector<Asteroid> asteroids;
     //This array will store the exploded array
@@ -167,13 +175,35 @@ int main() {
     //This vector will store the time for each exploded asteroid
     vector<Clock> explodedAsteroidsTime;
     //this will be increased for every asteroid destroyed
+
+    int heart = 5;
     int multiplier = 1;
-    //The clock for the multiplier to end
-    Clock endMultiplier;
-    Clock asteroidClock;
     bool a = true;
+    double movement = window.getSize().x * window.getSize().y * 0.0000039 * 2;
+
+    // hearts[0].setScale(Vector2f(40, 40));
+    // hearts[1].setScale(Vector2f(40, 40));
+    // hearts[2].setScale(Vector2f(40, 40));
+    // hearts[3].setScale(Vector2f(40, 40));
+    // hearts[4].setScale(Vector2f(40, 40));
+
+    for (int i = 0; i < 5; i++) {
+        hearts[i].setScale(Vector2f(40, 40));
+    }
+    for (int i = 0; i < 5; i++) {
+        static int pos = 10;
+        hearts[i].setPosition(Vector2f(pos, 20));
+        pos += 50;
+    }
+
+    // hearts[0].setPosition(Vector2f(10, 20));
+    // hearts[1].setPosition(Vector2f(60, 20));
+    // hearts[2].setPosition(Vector2f(110, 20));
+    // hearts[3].setPosition(Vector2f(160, 20));
+    // hearts[4].setPosition(Vector2f(210, 20));
+
     while (window.isOpen()) {
-      
+
         Event event;
         while (window.pollEvent(event)) {
             if (event.type == Event::Closed) {
@@ -189,21 +219,21 @@ int main() {
             a = false;
             event.key.code = Keyboard::Unknown;
         }
-        else if (Keyboard::isKeyPressed(Keyboard::A) && spaceship.checkleft(movement)) {
+          if ((Keyboard::isKeyPressed(Keyboard::A) || Keyboard::isKeyPressed(Keyboard::Left)) && spaceship.checkleft(movement)) {
             spaceship.move(-1 * movement, 0);
         }
-        else if (Keyboard::isKeyPressed(Keyboard::D) && spaceship.checkright(window, movement)) {
+        if ((Keyboard::isKeyPressed(Keyboard::D) || Keyboard::isKeyPressed(Keyboard::Right)) && spaceship.checkright(window, movement)) {
 
             spaceship.move(movement, 0);
         }
-        else if (Keyboard::isKeyPressed(Keyboard::W) && spaceship.checkUp(movement)) {
+        if ((Keyboard::isKeyPressed(Keyboard::W) || Keyboard::isKeyPressed(Keyboard::Up)) && spaceship.checkUp(movement)) {
             spaceship.move(0, -1 * movement);
         }
-        else if (Keyboard::isKeyPressed(Keyboard::S) && spaceship.checkdown(window, movement)) {
+        if ((Keyboard::isKeyPressed(Keyboard::S) || Keyboard::isKeyPressed(Keyboard::Down)) && spaceship.checkdown(window, movement)) {
             spaceship.move(0, movement);
         }
         //This condition will check if the multiplier has ended
-        if(endMultiplier.getElapsedTime().asSeconds() > 3){
+        if (endMultiplier.getElapsedTime().asSeconds() > 3) {
             multiplier = 1;
         }
         window.clear();
@@ -221,13 +251,16 @@ int main() {
             asteroids[i].move(window);
             asteroids[i].drawTo(window);
             if (spaceship.getGlobalBounds().intersects(asteroids[i].getGlobalBounds())) {
-                cout << "Game Over!" << endl;
-                window.close();
+                heart--;
+                asteroids.erase(asteroids.begin() + i);
+
             }
 
             if (asteroids[i].getPosition().y > window.getSize().y) {
                 asteroids.erase(asteroids.begin() + i);
+                heart--;
             }
+
 
             for (int j = 0; j < bullets.size(); j++) {
                 if (asteroids[i].getGlobalBounds().intersects(bullets[j].getGlobalBounds())) {
@@ -239,7 +272,7 @@ int main() {
                     bullets.erase(bullets.begin() + j);
                     multiplier++;
                     endMultiplier.restart();
-                    cout<<"Multiplier: "<<multiplier<<endl;
+                    std::cout << "Multiplier: " << multiplier << endl;
                 }
             }
         }
@@ -248,17 +281,26 @@ int main() {
             asteroids.push_back(as);
             asteroidClock.restart();
         }
-          for(int i=0;i<explodedAsteroids.size();i++){
-            if(explodedAsteroidsTime[i].getElapsedTime().asSeconds() > 1){
+        for (int i = 0;i < explodedAsteroids.size();i++) {
+            if (explodedAsteroidsTime[i].getElapsedTime().asSeconds() > 1) {
                 explodedAsteroids.erase(explodedAsteroids.begin() + i);
                 explodedAsteroidsTime.erase(explodedAsteroidsTime.begin() + i);
             }
-            else{
+            else {
                 explodedAsteroids[i].SetTexture("AsteroidDestructions.png");
                 explodedAsteroids[i].drawTo(window);
             }
         }
         spaceship.drawTo(window);
+
+        for (int i = 0; i < heart; i++) {
+            hearts[i].drawTo(window);
+        }
+        if (heart == 0) {
+            cout << "GAME OVER";
+            window.close();
+        }
+
         window.display();
     }
     return 0;
