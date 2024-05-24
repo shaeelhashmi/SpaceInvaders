@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
-
+#include<ctime>
 using namespace std;
 using namespace sf;
 
@@ -156,6 +156,30 @@ class Bullets {
         bullet.setPosition(Vector2f(x, y));
     }
 };
+class Boss {
+    Picture boss;
+    Clock changeMovement;
+    Clock ShootBullets;
+    public:
+    Boss(RenderWindow& window, string bossText) :boss(bossText) {
+        boss.setScale(Vector2f(window.getSize().x * 0.082, window.getSize().y * 0.134));
+        boss.setPosition(Vector2f((window.getSize().x / 2) - 100, window.getSize().y - 115));
+    }
+    void script(RenderWindow& window) {
+        srand(time(nullptr));
+        if (changeMovement.getElapsedTime().asSeconds() > 3) {
+            float positionX = rand() % window.getSize().x;
+            float positionY = rand() % window.getSize().y / 4;
+            boss.setPosition(Vector2f(positionX, positionY));
+
+            changeMovement.restart();
+        }
+        drawTo(window);
+    }
+    void drawTo(RenderWindow& window) {
+        boss.drawTo(window);
+    }
+};
 int main() {
     RenderWindow window(VideoMode::getDesktopMode(), "Space invader", Style::Close | Style::Fullscreen);
     window.setFramerateLimit(60);
@@ -167,7 +191,7 @@ int main() {
     //The clock for the multiplier to end
     Clock endMultiplier;
     Clock asteroidClock;
-
+    Boss b1(window, "Spaceship.png");
     vector<Bullets> bullets;
     vector<Asteroid> asteroids;
     //This array will store the exploded array
@@ -219,7 +243,7 @@ int main() {
             a = false;
             event.key.code = Keyboard::Unknown;
         }
-          if ((Keyboard::isKeyPressed(Keyboard::A) || Keyboard::isKeyPressed(Keyboard::Left)) && spaceship.checkleft(movement)) {
+        if ((Keyboard::isKeyPressed(Keyboard::A) || Keyboard::isKeyPressed(Keyboard::Left)) && spaceship.checkleft(movement)) {
             spaceship.move(-1 * movement, 0);
         }
         if ((Keyboard::isKeyPressed(Keyboard::D) || Keyboard::isKeyPressed(Keyboard::Right)) && spaceship.checkright(window, movement)) {
@@ -255,13 +279,6 @@ int main() {
                 asteroids.erase(asteroids.begin() + i);
 
             }
-
-            if (asteroids[i].getPosition().y > window.getSize().y) {
-                asteroids.erase(asteroids.begin() + i);
-                heart--;
-            }
-
-
             for (int j = 0; j < bullets.size(); j++) {
                 if (asteroids[i].getGlobalBounds().intersects(bullets[j].getGlobalBounds())) {
                     Clock c;
@@ -300,7 +317,7 @@ int main() {
             cout << "GAME OVER";
             window.close();
         }
-
+        b1.script(window);
         window.display();
     }
     return 0;
