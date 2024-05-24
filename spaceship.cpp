@@ -60,7 +60,7 @@ class Spaceship {
 public:
     Spaceship(RenderWindow& window) : spaceship("Spaceship.png") {
         spaceship.setScale(Vector2f(window.getSize().x * 0.082, window.getSize().y * 0.134));
-        spaceship.setPosition(Vector2f((window.getSize().x / 2) - 100, window.getSize().y - 115));
+        spaceship.setPosition(Vector2f((window.getSize().x / 2) - 100, window.getSize().y - 150));
     }
     bool checkleft(double move) {
         return spaceship.getPosition().x - move > 0;
@@ -68,8 +68,8 @@ public:
     bool checkright(RenderWindow& window, double move) {
         return spaceship.getPosition().x + move < window.getSize().x - 100;
     }
-    bool checkUp(double move) {
-        return spaceship.getPosition().y - move > 0;
+    bool checkUp(RenderWindow&window,double move) {
+        return spaceship.getPosition().y - move > window.getSize().y/2.0;
     }
     bool checkdown(RenderWindow& window, double move) {
         return spaceship.getPosition().y + move < window.getSize().y - 111;
@@ -169,20 +169,26 @@ class Boss {
     Clock ShootBullets;
 public:
     Boss(RenderWindow& window, string bossText) : boss(bossText) {
+        float halfX = window.getSize().x / 2.0;
+        float QuaterY = window.getSize().y / 4.0;
         boss.setScale(Vector2f(window.getSize().x * 0.082, window.getSize().y * 0.134));
-        boss.setPosition(Vector2f((window.getSize().x / 2) - 100, window.getSize().y - 115));
+        boss.setPosition(Vector2f(halfX, QuaterY));
     }
     void script(RenderWindow& window) {
         srand(time(nullptr));
+        float positionX;
+        float positionY;
+        float halfX = window.getSize().x / 2.0;
+        float QuarterY = window.getSize().y / 4.0;
         if (changeMovement.getElapsedTime().asSeconds() > 3) {
-            float positionX = rand() % window.getSize().x;
-            float positionY = rand() % window.getSize().y / 4;
+            positionX = rand() % int(halfX - 200.0);
+            positionY = rand() % int(QuarterY);
             boss.setPosition(Vector2f(positionX, positionY));
-
             changeMovement.restart();
         }
         drawTo(window);
     }
+
     void drawTo(RenderWindow& window) {
         boss.drawTo(window);
     }
@@ -193,8 +199,7 @@ int main() {
     window.setFramerateLimit(60);
     Spaceship spaceship(window);
     Bullets bullet(window);
-    Picture hearts[5] = { Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png") };
-
+    vector<Picture> hearts(5, Picture("hearts.png"));
     Clock clock;
     //The clock for the multiplier to end
     Clock endMultiplier;
@@ -207,15 +212,20 @@ int main() {
     //This vector will store the time for each exploded asteroid
     vector<Clock> explodedAsteroidsTime;
     //this will be increased for every asteroid destroyed
-
-    int heart = 5;
     int multiplier = 1;
+    //Levels to set the difficulty
+    int level = 1;
+    //a variable to store the number of asteroids fallen to change the level
+    int FallenAsteroids=0;
     bool a = true;
     double movement = window.getSize().x * window.getSize().y * 0.0000039 * 2;
     int score = 0;
     int highScore = 0;
-
+    vector<Bullets> BulletsToDelete;
     ifstream HighScoreInput("highscore.txt");
+    if (!HighScoreInput) {
+        cout << "Error opening file" << endl;
+    }
     if (HighScoreInput.is_open()) {
         HighScoreInput >> highScore;
         HighScoreInput.close();
@@ -225,7 +235,7 @@ int main() {
     if (!font.loadFromFile("AGENCYR.ttf")) {
         cout << "Error loading font" << endl;
     }
-    Text scoretxt, highscoretxt;
+    Text scoretxt, highscoretxt,levelno;
     scoretxt.setFont(font);
     scoretxt.setCharacterSize(24);
     scoretxt.setFillColor(Color::White);
@@ -235,6 +245,11 @@ int main() {
     highscoretxt.setCharacterSize(24);
     highscoretxt.setFillColor(Color::White);
     highscoretxt.setPosition(window.getSize().x - 150, 40);
+
+    levelno.setFont(font);
+    levelno.setCharacterSize(24);
+    levelno.setFillColor(Color::White);
+    levelno.setPosition(window.getSize().x - 150, 70);
 
     for (int i = 0; i < 5; i++) {
         hearts[i].setScale(Vector2f(40, 40));
@@ -254,7 +269,7 @@ int main() {
             }
         }
         if (event.key.code == Keyboard::Space && (clock.getElapsedTime().asSeconds() > 1 || a)) {
-            bullet.SetPosition(spaceship.getPosition().x + (100 / 2) - (bullet.getSize().x / 2) - 10, spaceship.getPosition().y - 10);
+            bullet.SetPosition(spaceship.getPosition().x +70, spaceship.getPosition().y - 10);
             bullets.push_back(bullet);
             bullet.drawTo(window);
             window.display();
@@ -268,7 +283,7 @@ int main() {
         if ((Keyboard::isKeyPressed(Keyboard::D) || Keyboard::isKeyPressed(Keyboard::Right)) && spaceship.checkright(window, movement)) {
             spaceship.move(movement, 0);
         }
-        if ((Keyboard::isKeyPressed(Keyboard::W) || Keyboard::isKeyPressed(Keyboard::Up)) && spaceship.checkUp(movement)) {
+        if ((Keyboard::isKeyPressed(Keyboard::W) || Keyboard::isKeyPressed(Keyboard::Up)) && spaceship.checkUp(window,movement)) {
             spaceship.move(0, -1 * movement);
         }
         if ((Keyboard::isKeyPressed(Keyboard::S) || Keyboard::isKeyPressed(Keyboard::Down)) && spaceship.checkdown(window, movement)) {
@@ -284,7 +299,7 @@ int main() {
                 bullets.erase(bullets.begin() + i);
             }
             else {
-                bullets[i].move(0, window.getSize().y * -0.00133 * 2);
+                bullets[i].move(0, window.getSize().y * -0.004);
                 bullets[i].drawTo(window);
             }
         }
@@ -293,7 +308,7 @@ int main() {
             asteroids[i].move(window);
             asteroids[i].drawTo(window);
             if (spaceship.getGlobalBounds().intersects(asteroids[i].getGlobalBounds())) {
-                heart--;
+                hearts.erase(hearts.end()-1);
                 asteroids.erase(asteroids.begin() + i);
             }
             for (int j = 0; j < bullets.size(); j++) {
@@ -309,16 +324,18 @@ int main() {
                     else if (asteroidSize == 2) {
                         score += 10 * multiplier;
                     }
-                    asteroids.erase(asteroids.begin() + i);
-                    bullets.erase(bullets.begin() + j);
+                    asteroids.erase(asteroids.begin() + size_t(i));
+                    i--;
+                    bullets.erase(bullets.begin() + size_t(j));
+                    j--;
                     multiplier++;
                     endMultiplier.restart();
-                    std::cout << "Multiplier: " << multiplier << endl;
                 }
             }
         }
         if (asteroidClock.getElapsedTime().asSeconds() > 3.0f) {
             Asteroid as(window, "Asteroid.png", spaceship.getSize().x);
+            FallenAsteroids++;
             asteroids.push_back(as);
             asteroidClock.restart();
         }
@@ -333,16 +350,21 @@ int main() {
             }
         }
         spaceship.drawTo(window);
-
-        for (int i = 0; i < heart; i++) {
+        b1.script(window);
+        //This is a condition for checking the levels
+        if (FallenAsteroids >= 5)
+        {
+            level++;
+            FallenAsteroids = 0;
+        }
+        for (int i = 0; i < hearts.size(); i++) {
             hearts[i].drawTo(window);
         }
-        if (heart == 0) {
+        if (hearts.size()==0) {
             cout << "GAME OVER";
-           
+
             if (score > highScore) {
                 highScore = score;
-           
                 ofstream HighScore("highscore.txt", ios::app);
                 if (HighScore.is_open()) {
                     HighScore << highScore << "\n";
@@ -352,13 +374,12 @@ int main() {
             }
             window.close();
         }
-
         scoretxt.setString("Score: " + to_string(score));
         highscoretxt.setString("High Score: " + to_string(highScore));
+        levelno.setString("Level" + to_string(level));
         window.draw(scoretxt);
         window.draw(highscoretxt);
-
-        b1.script(window);
+        window.draw(levelno);      
         window.display();
     }
     return 0;
