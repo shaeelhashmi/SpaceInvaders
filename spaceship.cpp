@@ -2,12 +2,14 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include<ctime>
+#include <ctime>
+#include <fstream>
+
 using namespace std;
 using namespace sf;
 
 class Picture {
-    public:
+public:
     Picture(string filePath) {
         texture.loadFromFile(filePath);
         sprite.setTexture(texture);
@@ -47,7 +49,7 @@ class Picture {
         return sprite.getGlobalBounds();
     }
 
-    private:
+private:
     sf::Texture texture;
     sf::Sprite sprite;
 };
@@ -55,7 +57,7 @@ class Picture {
 class Spaceship {
     Picture spaceship;
 
-    public:
+public:
     Spaceship(RenderWindow& window) : spaceship("Spaceship.png") {
         spaceship.setScale(Vector2f(window.getSize().x * 0.082, window.getSize().y * 0.134));
         spaceship.setPosition(Vector2f((window.getSize().x / 2) - 100, window.getSize().y - 115));
@@ -88,17 +90,18 @@ class Spaceship {
         return spaceship.getGlobalBounds();
     }
 };
+
 class Asteroid {
     Picture asteroid;
+    int size;
 
-    public:
+public:
     Asteroid(RenderWindow& window, string Filepath, double Corners) : asteroid(Filepath) {
-        int size = (RAND_MAX % 2) + 1;
+        size = (rand() % 2) + 1;
 
         asteroid.setScale(Vector2f(30 * size, 30 * size));
         asteroid.setPosition(Vector2f((float)rand() / RAND_MAX * window.getSize().x, -size));
         if ((asteroid.getPosition().x + Corners < window.getSize().x / 2)) {
-
             asteroid.move(Corners, 0);
         }
         else {
@@ -124,12 +127,15 @@ class Asteroid {
     FloatRect getGlobalBounds() {
         return asteroid.getGlobalBounds();
     }
-
+    int getSizeValue() {
+        return size;
+    }
 };
+
 class Bullets {
     Picture bullet;
 
-    public:
+public:
     Bullets(RenderWindow& window) : bullet("bullets.png") {
         bullet.setScale(Vector2f(window.getSize().x * 0.01239, window.getSize().y * 0.04103));
     }
@@ -156,12 +162,13 @@ class Bullets {
         bullet.setPosition(Vector2f(x, y));
     }
 };
+
 class Boss {
     Picture boss;
     Clock changeMovement;
     Clock ShootBullets;
-    public:
-    Boss(RenderWindow& window, string bossText) :boss(bossText) {
+public:
+    Boss(RenderWindow& window, string bossText) : boss(bossText) {
         boss.setScale(Vector2f(window.getSize().x * 0.082, window.getSize().y * 0.134));
         boss.setPosition(Vector2f((window.getSize().x / 2) - 100, window.getSize().y - 115));
     }
@@ -180,6 +187,7 @@ class Boss {
         boss.drawTo(window);
     }
 };
+
 int main() {
     RenderWindow window(VideoMode::getDesktopMode(), "Space invader", Style::Close | Style::Fullscreen);
     window.setFramerateLimit(60);
@@ -204,12 +212,29 @@ int main() {
     int multiplier = 1;
     bool a = true;
     double movement = window.getSize().x * window.getSize().y * 0.0000039 * 2;
+    int score = 0;
+    int highScore = 0;
 
-    // hearts[0].setScale(Vector2f(40, 40));
-    // hearts[1].setScale(Vector2f(40, 40));
-    // hearts[2].setScale(Vector2f(40, 40));
-    // hearts[3].setScale(Vector2f(40, 40));
-    // hearts[4].setScale(Vector2f(40, 40));
+    ifstream HighScoreInput("highscore.txt");
+    if (HighScoreInput.is_open()) {
+        HighScoreInput >> highScore;
+        HighScoreInput.close();
+    }
+
+    Font font;
+    if (!font.loadFromFile("AGENCYR.ttf")) {
+        cout << "Error loading font" << endl;
+    }
+    Text scoretxt, highscoretxt;
+    scoretxt.setFont(font);
+    scoretxt.setCharacterSize(24);
+    scoretxt.setFillColor(Color::White);
+    scoretxt.setPosition(window.getSize().x - 150, 10);
+
+    highscoretxt.setFont(font);
+    highscoretxt.setCharacterSize(24);
+    highscoretxt.setFillColor(Color::White);
+    highscoretxt.setPosition(window.getSize().x - 150, 40);
 
     for (int i = 0; i < 5; i++) {
         hearts[i].setScale(Vector2f(40, 40));
@@ -219,12 +244,6 @@ int main() {
         hearts[i].setPosition(Vector2f(pos, 20));
         pos += 50;
     }
-
-    // hearts[0].setPosition(Vector2f(10, 20));
-    // hearts[1].setPosition(Vector2f(60, 20));
-    // hearts[2].setPosition(Vector2f(110, 20));
-    // hearts[3].setPosition(Vector2f(160, 20));
-    // hearts[4].setPosition(Vector2f(210, 20));
 
     while (window.isOpen()) {
 
@@ -247,7 +266,6 @@ int main() {
             spaceship.move(-1 * movement, 0);
         }
         if ((Keyboard::isKeyPressed(Keyboard::D) || Keyboard::isKeyPressed(Keyboard::Right)) && spaceship.checkright(window, movement)) {
-
             spaceship.move(movement, 0);
         }
         if ((Keyboard::isKeyPressed(Keyboard::W) || Keyboard::isKeyPressed(Keyboard::Up)) && spaceship.checkUp(movement)) {
@@ -277,7 +295,6 @@ int main() {
             if (spaceship.getGlobalBounds().intersects(asteroids[i].getGlobalBounds())) {
                 heart--;
                 asteroids.erase(asteroids.begin() + i);
-
             }
             for (int j = 0; j < bullets.size(); j++) {
                 if (asteroids[i].getGlobalBounds().intersects(bullets[j].getGlobalBounds())) {
@@ -285,6 +302,13 @@ int main() {
                     asteroids[i].SetTexture("AsteroidDestructions.png");
                     explodedAsteroids.push_back(asteroids[i]);
                     explodedAsteroidsTime.push_back(c);
+                    int asteroidSize = asteroids[i].getSizeValue();
+                    if (asteroidSize == 1) {
+                        score += 5 * multiplier;
+                    }
+                    else if (asteroidSize == 2) {
+                        score += 10 * multiplier;
+                    }
                     asteroids.erase(asteroids.begin() + i);
                     bullets.erase(bullets.begin() + j);
                     multiplier++;
@@ -298,7 +322,7 @@ int main() {
             asteroids.push_back(as);
             asteroidClock.restart();
         }
-        for (int i = 0;i < explodedAsteroids.size();i++) {
+        for (int i = 0; i < explodedAsteroids.size(); i++) {
             if (explodedAsteroidsTime[i].getElapsedTime().asSeconds() > 1) {
                 explodedAsteroids.erase(explodedAsteroids.begin() + i);
                 explodedAsteroidsTime.erase(explodedAsteroidsTime.begin() + i);
@@ -315,8 +339,25 @@ int main() {
         }
         if (heart == 0) {
             cout << "GAME OVER";
+           
+            if (score > highScore) {
+                highScore = score;
+           
+                ofstream HighScore("highscore.txt", ios::app);
+                if (HighScore.is_open()) {
+                    HighScore << highScore << "\n";
+                    HighScore.close();
+                }
+
+            }
             window.close();
         }
+
+        scoretxt.setString("Score: " + to_string(score));
+        highscoretxt.setString("High Score: " + to_string(highScore));
+        window.draw(scoretxt);
+        window.draw(highscoretxt);
+
         b1.script(window);
         window.display();
     }
