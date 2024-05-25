@@ -48,6 +48,9 @@ public:
     FloatRect getGlobalBounds() {
         return sprite.getGlobalBounds();
     }
+    void rotate(float angle) {
+        sprite.rotate(angle);
+    }
 
 private:
     sf::Texture texture;
@@ -220,7 +223,6 @@ int main() {
         HighScoreInput >> highScore;
         HighScoreInput.close();
     }
-
     Font font;
     if (!font.loadFromFile("AGENCYR.ttf")) {
         cout << "Error loading font" << endl;

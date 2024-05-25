@@ -94,6 +94,46 @@ bool checkUp(double move,RenderWindow& window) {
     }
 };
 
+class Asteroid {
+    Picture asteroid;
+    int size;
+
+public:
+    Asteroid(RenderWindow& window, string Filepath, double Corners) : asteroid(Filepath) {
+        size = (rand() % 2) + 1;
+
+        asteroid.setScale(Vector2f(30 * size, 30 * size));
+        asteroid.setPosition(Vector2f((float)rand() / RAND_MAX * window.getSize().x, -size));
+        if ((asteroid.getPosition().x + Corners < window.getSize().x / 2)) {
+            asteroid.move(Corners, 0);
+        }
+        else {
+            asteroid.move(-1 * Corners, 0);
+        }
+    }
+    void SetTexture(string filePath) {
+        asteroid.SetTexture(filePath);
+    }
+    void move(RenderWindow& window) {
+        double speed = 0.00000097 * window.getSize().y * window.getSize().x * 2;
+        asteroid.move(0, speed);
+    }
+    void drawTo(RenderWindow& window) {
+        asteroid.drawTo(window);
+    }
+    Vector2f getPosition() {
+        return asteroid.getPosition();
+    }
+    Vector2f getSize() {
+        return asteroid.getSize();
+    }
+    FloatRect getGlobalBounds() {
+        return asteroid.getGlobalBounds();
+    }
+    int getSizeValue() {
+        return size;
+    }
+};
 
 class Bullets {
     Picture bullet;
@@ -140,14 +180,14 @@ public:
     }
     void script(RenderWindow& window) {
         srand(time(nullptr));
-        if (changeMovement.getElapsedTime().asSeconds() > 10) {
+        if (changeMovement.getElapsedTime().asSeconds() > 8) {
             float positionX = rand() % (window.getSize().x-200);
             float positionY = (rand() % window.getSize().y / 4)+200;
             boss.setPosition(Vector2f(positionX, positionY));
             changeMovement.restart();
         }
         drawTo(window);
-        if(hits==8)
+        if(hits==10)
         {
             cout<<"Boss is dead";
         }
@@ -170,6 +210,13 @@ public:
 int main() {
     RenderWindow window(VideoMode::getDesktopMode(), "Space invader", Style::Close | Style::Fullscreen);
     window.setFramerateLimit(60);
+    vector<Asteroid> asteroids;
+    //This array will store the exploded array
+    vector<Asteroid> explodedAsteroids;
+    //This vector will store the time for each exploded asteroid
+    vector<Clock> explodedAsteroidsTime;
+    Clock asteroidClock;
+      //The things below are related to the spaceship and the boss
     Spaceship spaceship(window);
     Bullets bullet(window,"bullets.png");
     Bullets bossBullet(window,"Bombs.png");
@@ -252,6 +299,48 @@ Clock bossShoot;
             spaceship.move(0, movement);
         }
         window.clear();
+        for (int i = 0; i < asteroids.size(); i++) {
+            asteroids[i].SetTexture("Asteroid.png");
+            asteroids[i].move(window);
+            asteroids[i].drawTo(window);
+            if (spaceship.getGlobalBounds().intersects(asteroids[i].getGlobalBounds())) {
+                heart--;
+                asteroids.erase(asteroids.begin() + i);
+            }
+            for (int j = 0; j < bullets.size(); j++) {
+                if (asteroids[i].getGlobalBounds().intersects(bullets[j].getGlobalBounds())) {
+                    Clock c;
+                    asteroids[i].SetTexture("AsteroidDestructions.png");
+                    explodedAsteroids.push_back(asteroids[i]);
+                    explodedAsteroidsTime.push_back(c);
+                    int asteroidSize = asteroids[i].getSizeValue();
+                    if (asteroidSize == 1) {
+                        score += 5 * multiplier;
+                    }
+                    else if (asteroidSize == 2) {
+                        score += 10 * multiplier;
+                    }
+                    asteroids.erase(asteroids.begin() + i);
+                    bullets.erase(bullets.begin() + j);
+                }
+            }
+        }
+          if (asteroidClock.getElapsedTime().asSeconds() > 3.0f) {
+            Asteroid as(window, "Asteroid.png", spaceship.getSize().x);
+            asteroids.push_back(as);
+            asteroidClock.restart();
+        }
+        for (int i = 0; i < explodedAsteroids.size(); i++) {
+            if (explodedAsteroidsTime[i].getElapsedTime().asSeconds() > 1) {
+                explodedAsteroids.erase(explodedAsteroids.begin() + i);
+                explodedAsteroidsTime.erase(explodedAsteroidsTime.begin() + i);
+            }
+            else {
+                explodedAsteroids[i].SetTexture("AsteroidDestructions.png");
+                explodedAsteroids[i].drawTo(window);
+            }
+        }
+        //These functions will spawn the asteroids in the window
         for (int i = 0; i < bullets.size(); i++) {
             if (bullets[i].getPosition().y < 0) {
                 bullets.erase(bullets.begin() + i);
