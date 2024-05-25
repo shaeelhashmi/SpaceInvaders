@@ -48,6 +48,9 @@ public:
     FloatRect getGlobalBounds() {
         return sprite.getGlobalBounds();
     }
+    void rotate(float angle) {
+        sprite.rotate(angle);
+    }
 
 private:
     sf::Texture texture;
@@ -68,7 +71,7 @@ public:
     bool checkright(RenderWindow& window, double move) {
         return spaceship.getPosition().x + move < window.getSize().x - 100;
     }
-    bool checkUp(double move,RenderWindow& window) {
+bool checkUp(double move,RenderWindow& window) {
         return spaceship.getPosition().y - move > window.getSize().y/2;
     }
     bool checkdown(RenderWindow& window, double move) {
@@ -91,52 +94,12 @@ public:
     }
 };
 
-class Asteroid {
-    Picture asteroid;
-    int size;
-
-public:
-    Asteroid(RenderWindow& window, string Filepath, double Corners) : asteroid(Filepath) {
-        size = (rand() % 2) + 1;
-
-        asteroid.setScale(Vector2f(30 * size, 30 * size));
-        asteroid.setPosition(Vector2f((float)rand() / RAND_MAX * window.getSize().x, -size));
-        if ((asteroid.getPosition().x + Corners < window.getSize().x / 2)) {
-            asteroid.move(Corners, 0);
-        }
-        else {
-            asteroid.move(-1 * Corners, 0);
-        }
-    }
-    void SetTexture(string filePath) {
-        asteroid.SetTexture(filePath);
-    }
-    void move(RenderWindow& window) {
-        double speed = 0.00000097 * window.getSize().y * window.getSize().x * 2;
-        asteroid.move(0, speed);
-    }
-    void drawTo(RenderWindow& window) {
-        asteroid.drawTo(window);
-    }
-    Vector2f getPosition() {
-        return asteroid.getPosition();
-    }
-    Vector2f getSize() {
-        return asteroid.getSize();
-    }
-    FloatRect getGlobalBounds() {
-        return asteroid.getGlobalBounds();
-    }
-    int getSizeValue() {
-        return size;
-    }
-};
 
 class Bullets {
     Picture bullet;
 
 public:
-    Bullets(RenderWindow& window) : bullet("bullets.png") {
+    Bullets(RenderWindow& window,string Texture) : bullet(Texture) {
         bullet.setScale(Vector2f(window.getSize().x * 0.01239, window.getSize().y * 0.04103));
     }
     void move(RenderWindow& window) {
@@ -167,54 +130,63 @@ class Boss {
     Picture boss;
     Clock changeMovement;
     Clock ShootBullets;
+    int hits;
 public:
     Boss(RenderWindow& window, string bossText) : boss(bossText) {
         boss.setScale(Vector2f(window.getSize().x * 0.082, window.getSize().y * 0.134));
         boss.setPosition(Vector2f((window.getSize().x / 2) - 100, 100));
+        boss.rotate(180);
+        hits=0;
     }
     void script(RenderWindow& window) {
         srand(time(nullptr));
-        if (changeMovement.getElapsedTime().asSeconds() > 3) {
-            float positionX = rand() % window.getSize().x;
-            float positionY = rand() % window.getSize().y / 4;
+        if (changeMovement.getElapsedTime().asSeconds() > 10) {
+            float positionX = rand() % (window.getSize().x-200);
+            float positionY = (rand() % window.getSize().y / 4)+200;
             boss.setPosition(Vector2f(positionX, positionY));
             changeMovement.restart();
         }
         drawTo(window);
+        if(hits==5)
+        {
+            cout<<"Boss is dead";
+        }
+    }
+    void incrementHits(){
+        hits++;
     }
     void drawTo(RenderWindow& window) {
         boss.drawTo(window);
     }
+    Vector2f getPosition() {
+        return boss.getPosition();
+    }
+     FloatRect getGlobalBounds() {
+        return boss.getGlobalBounds();
+    }
 };
+
 //This class is for minions that will spawn in each level
 int main() {
     RenderWindow window(VideoMode::getDesktopMode(), "Space invader", Style::Close | Style::Fullscreen);
     window.setFramerateLimit(60);
     Spaceship spaceship(window);
-    Bullets bullet(window);
+    Bullets bullet(window,"bullets.png");
+    Bullets bossBullet(window,"Bombs.png");
     Picture hearts[5] = { Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png") };
     int levels = 1;
-    int shootedAsteroids = 0;
     Clock clock;
-    //The clock for the multiplier to end
-    Clock endMultiplier;
-    Clock asteroidClock;
-    Boss b1(window, "Spaceship.png");
+    Boss b1(window, "Boss.png");
     vector<Bullets> bullets;
-    vector<Asteroid> asteroids;
-    //This array will store the exploded array
-    vector<Asteroid> explodedAsteroids;
-    //This vector will store the time for each exploded asteroid
-    vector<Clock> explodedAsteroidsTime;
-    //this will be increased for every asteroid destroyed
-
+    vector<Bullets> bossBullets;
+//This Clock shows the bullets shot by the boss
+Clock bossShoot;
     int heart = 5;
     int multiplier = 1;
     bool a = true;
     double movement = window.getSize().x * window.getSize().y * 0.0000039 * 2;
     int score = 0;
     int highScore = 0;
-
     ifstream HighScoreInput("highscore.txt");
     if (HighScoreInput.is_open()) {
         HighScoreInput >> highScore;
@@ -249,7 +221,7 @@ int main() {
         hearts[i].setPosition(Vector2f(pos, 20));
         pos += 50;
     }
-
+    
     while (window.isOpen()) {
 
         Event event;
@@ -259,7 +231,7 @@ int main() {
             }
         }
         if (event.key.code == Keyboard::Space && (clock.getElapsedTime().asSeconds() > 1 || a)) {
-              bullet.SetPosition((spaceship.getPosition().x)+50 , spaceship.getPosition().y - 10);
+            bullet.SetPosition((spaceship.getPosition().x)+50 , spaceship.getPosition().y - 10);
             bullets.push_back(bullet);
             bullet.drawTo(window);
             window.display();
@@ -279,10 +251,6 @@ int main() {
         if ((Keyboard::isKeyPressed(Keyboard::S) || Keyboard::isKeyPressed(Keyboard::Down)) && spaceship.checkdown(window, movement)) {
             spaceship.move(0, movement);
         }
-        //This condition will check if the multiplier has ended
-        if (endMultiplier.getElapsedTime().asSeconds() > 3) {
-            multiplier = 1;
-        }
         window.clear();
         for (int i = 0; i < bullets.size(); i++) {
             if (bullets[i].getPosition().y < 0) {
@@ -293,69 +261,52 @@ int main() {
                 bullets[i].drawTo(window);
             }
         }
-        for (int i = 0; i < asteroids.size(); i++) {
-            asteroids[i].SetTexture("Asteroid.png");
-            asteroids[i].move(window);
-            asteroids[i].drawTo(window);
-            if (spaceship.getGlobalBounds().intersects(asteroids[i].getGlobalBounds())) {
-                heart--;
-                asteroids.erase(asteroids.begin() + i);
-            }
-            for (int j = 0; j < bullets.size(); j++) {
-                if (asteroids[i].getGlobalBounds().intersects(bullets[j].getGlobalBounds())) {
-                    Clock c;
-                    asteroids[i].SetTexture("AsteroidDestructions.png");
-                    explodedAsteroids.push_back(asteroids[i]);
-                    explodedAsteroidsTime.push_back(c);
-                    int asteroidSize = asteroids[i].getSizeValue();
-                    if (asteroidSize == 1) {
-                        score += 5 * multiplier;
-                    }
-                    else if (asteroidSize == 2) {
-                        score += 10 * multiplier;
-                    }
-                    asteroids.erase(asteroids.begin() + i);
-                    bullets.erase(bullets.begin() + j);
-                    multiplier++;
-                    endMultiplier.restart();
-                }
-            }
-        }
-        if(shootedAsteroids == 5){
-            levels++;
-            shootedAsteroids = 0;
-        }
-        // if(levels%5==0){
-        //     b1.script(window);
-        //     cout<<"Start boss level";
-        // }
+   
         b1.script(window);
-        if (asteroidClock.getElapsedTime().asSeconds() > 3.0f) {
-            Asteroid as(window, "Asteroid.png", spaceship.getSize().x);
-            shootedAsteroids++;
-            asteroids.push_back(as);
-            asteroidClock.restart();
-        }
-        for (int i = 0; i < explodedAsteroids.size(); i++) {
-            if (explodedAsteroidsTime[i].getElapsedTime().asSeconds() > 1) {
-                explodedAsteroids.erase(explodedAsteroids.begin() + i);
-                explodedAsteroidsTime.erase(explodedAsteroidsTime.begin() + i);
+        //This condition will check if the spaceship bullets has collided with the boss
+        for(int i=0;i<bullets.size();i++){
+            if(bullets[i].getGlobalBounds().intersects(b1.getGlobalBounds())){
+                b1.incrementHits();
+                bullets.erase(bullets.begin()+i);
+                
             }
-            else {
-                explodedAsteroids[i].SetTexture("AsteroidDestructions.png");
-                explodedAsteroids[i].drawTo(window);
+        }
+        //This condition will check if the boss bullets has collided with the spaceship
+        for(int i=0;i<bossBullets.size();i++){
+            if(bossBullets[i].getGlobalBounds().intersects(spaceship.getGlobalBounds())){
+                heart-=2;
+                bossBullets.erase(bossBullets.begin()+i);
+            }
+        }
+        //This condition will check if the boss bullets are out of bounds
+        for(int i=0;i<bossBullets.size();i++){
+            if(bossBullets[i].getPosition().y>window.getSize().y){
+                bossBullets.erase(bossBullets.begin()+i);
+            }
+        }
+        if (bossShoot.getElapsedTime().asSeconds() > 4.5) {
+            bossBullet.SetPosition(b1.getPosition().x-50, b1.getPosition().y);
+            bossBullets.push_back(bossBullet);
+            bossShoot.restart();
+        }
+        for(int i=0;i<bossBullets.size();i++){
+            if(bossBullets[i].getPosition().y>0){
+                bossBullets[i].move(0,window.getSize().y*0.002);
+                bossBullets[i].drawTo(window);
+            }
+            else{
+                bossBullets.erase(bossBullets.begin()+i);
             }
         }
         spaceship.drawTo(window);
         for (int i = 0; i < heart; i++) {
             hearts[i].drawTo(window);
         }
-        if (heart == 0) {
+        if (heart <= 0) {
             cout << "GAME OVER";
            
             if (score > highScore) {
                 highScore = score;
-           
                 ofstream HighScore("highscore.txt", ios::app);
                 if (HighScore.is_open()) {
                     HighScore << highScore << "\n";
@@ -365,13 +316,11 @@ int main() {
             }
             window.close();
         }
-
         scoretxt.setString("Score: " + to_string(score));
         highscoretxt.setString("High Score: " + to_string(highScore));
         levelsTxt.setString("Level: " + to_string(levels));
         window.draw(scoretxt);
         window.draw(highscoretxt);
-        window.draw(levelsTxt);
         window.display();
     }
     return 0;

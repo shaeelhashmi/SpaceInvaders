@@ -71,8 +71,8 @@ public:
     bool checkright(RenderWindow& window, double move) {
         return spaceship.getPosition().x + move < window.getSize().x - 100;
     }
-    bool checkUp(double move) {
-        return spaceship.getPosition().y - move > 0;
+bool checkUp(double move,RenderWindow& window) {
+        return spaceship.getPosition().y - move > window.getSize().y/2;
     }
     bool checkdown(RenderWindow& window, double move) {
         return spaceship.getPosition().y + move < window.getSize().y - 111;
@@ -140,9 +140,9 @@ public:
     }
     void script(RenderWindow& window) {
         srand(time(nullptr));
-        if (changeMovement.getElapsedTime().asSeconds() > 10) {
-            float positionX = rand() % window.getSize().x;
-            float positionY = rand() % window.getSize().y / 4;
+        if (changeMovement.getElapsedTime().asSeconds() > 12) {
+            float positionX = rand() % (window.getSize().x-200);
+            float positionY = (rand() % window.getSize().y / 4)+200;
             boss.setPosition(Vector2f(positionX, positionY));
             changeMovement.restart();
         }
@@ -184,7 +184,6 @@ int main() {
     vector<Bullets> bossBullets;
 //This Clock shows the bullets shot by the boss
 Clock bossShoot;
-
     int heart = 5;
     int multiplier = 1;
     bool a = true;
@@ -250,14 +249,14 @@ Clock bossShoot;
         if ((Keyboard::isKeyPressed(Keyboard::D) || Keyboard::isKeyPressed(Keyboard::Right)) && spaceship.checkright(window, movement)) {
             spaceship.move(movement, 0);
         }
-        if ((Keyboard::isKeyPressed(Keyboard::W) || Keyboard::isKeyPressed(Keyboard::Up)) && spaceship.checkUp(movement)) {
+        if ((Keyboard::isKeyPressed(Keyboard::W) || Keyboard::isKeyPressed(Keyboard::Up)) && spaceship.checkUp(movement,window)) {
             spaceship.move(0, -1 * movement);
         }
         if ((Keyboard::isKeyPressed(Keyboard::S) || Keyboard::isKeyPressed(Keyboard::Down)) && spaceship.checkdown(window, movement)) {
             spaceship.move(0, movement);
         }
         //This condition will check if the multiplier has ended
-        if (endMultiplier.getElapsedTime().asSeconds() > 3) {
+        if (endMultiplier.getElapsedTime().asSeconds() > 5) {
             multiplier = 1;
         }
         window.clear();
@@ -277,12 +276,13 @@ Clock bossShoot;
             if(bullets[i].getGlobalBounds().intersects(b1.getGlobalBounds())){
                 b1.incrementHits();
                 bullets.erase(bullets.begin()+i);
+                
             }
         }
         //This condition will check if the boss bullets has collided with the spaceship
         for(int i=0;i<bossBullets.size();i++){
             if(bossBullets[i].getGlobalBounds().intersects(spaceship.getGlobalBounds())){
-                heart-=2;
+                heart--;
                 bossBullets.erase(bossBullets.begin()+i);
             }
         }
