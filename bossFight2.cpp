@@ -147,10 +147,6 @@ public:
             changeMovement.restart();
         }
         drawTo(window);
-        if(hits==8)
-        {
-            cout<<"Boss is dead";
-        }
     }
     void incrementHits(){
         hits++;
@@ -163,6 +159,9 @@ public:
     }
      FloatRect getGlobalBounds() {
         return boss.getGlobalBounds();
+    }
+    int getHits(){
+        return hits;
     }
 };
 
