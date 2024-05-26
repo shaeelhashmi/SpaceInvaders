@@ -1,14 +1,11 @@
 #include <iostream>
+#include <SFML/Graphics.hpp>
 #include <string>
 #include <fstream>
-#include <SFML/Graphics.hpp>
 #include "GameClasses.cpp"
 
 using namespace std;
 using namespace sf;
-
-void firstScreen(RenderWindow& window);
-void mainmenu(RenderWindow& window);
 
 void writeToLine(string filename, int lineNumber, string newContent) {
     ifstream inFile(filename);
