@@ -1,5 +1,0 @@
-dada 45
-dad 25
-dad 10
-dada 5
-dada 5
