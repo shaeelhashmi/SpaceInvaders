@@ -1,13 +1,12 @@
 #include "bossFight.cpp"
-int main() {
-    RenderWindow window(VideoMode::getDesktopMode(), "Space invader", Style::Close | Style::Fullscreen);
-    window.setFramerateLimit(60);
+void game(RenderWindow& window ,string username) {
     Spaceship spaceship(window);
     Bullets bullet(window,"bullets.png");
     Picture hearts[5] = { Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png") };
     int levels = 1;
     int shootedAsteroids = 0;
     Clock clock;
+      Asteroid as(window, "Asteroid.png", spaceship.getSize().x);
     //The clock for the multiplier to end
     Clock endMultiplier;
     Clock asteroidClock;
@@ -73,12 +72,31 @@ int main() {
         }
         else if(levels==10)
         {
-
+            changelevel=true;
+            if(asteroids.size()==0)
+            {
+                level2Boss(window,levels,spaceship,bullets,heart,score,highScore,hearts,scoretxt,highscoretxt,levelsTxt,bullet,clock,movement);
+                changelevel=false;
+            }   
         }
         else if(levels==15)
-        {}
+        {
+            changelevel=true;
+            if(asteroids.size()==0)
+            {
+                 level3Boss(window,levels,spaceship,bullets,heart,score,highScore,hearts,scoretxt,highscoretxt,levelsTxt,bullet,clock,movement,as,asteroids,explodedAsteroids,explodedAsteroidsTime,asteroidClock,multiplier,endMultiplier);
+                changelevel=false;
+            }
+        }
         else if(levels==20)
-        {}
+        {
+            changelevel=true;
+            if(asteroids.size()==0)
+            {
+                   level4Boss(window,levels,spaceship,bullets,heart,score,highScore,hearts,scoretxt,highscoretxt,levelsTxt,bullet,clock,movement,as,asteroids,explodedAsteroids,explodedAsteroidsTime,asteroidClock,multiplier,endMultiplier);
+                changelevel=false;
+            }
+        }
         Event event;
         while (window.pollEvent(event)) {
             if (event.type == Event::Closed) {
@@ -159,7 +177,7 @@ int main() {
         if (asteroidClock.getElapsedTime().asSeconds() > 3.0f) {
             if(!changelevel)
             {
-            Asteroid as(window, "Asteroid.png", spaceship.getSize().x);
+           as.setRandomPosition(window);
             shootedAsteroids++;
             asteroids.push_back(as);
             asteroidClock.restart();
@@ -202,5 +220,4 @@ int main() {
         window.draw(levelsTxt);
         window.display();
     }
-    return 0;
 }

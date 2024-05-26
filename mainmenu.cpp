@@ -1,6 +1,4 @@
-#include <iostream>
-#include <SFML/Graphics.hpp>
-#include <string>
+#include "spaceship.cpp"
 
 using namespace std;
 using namespace sf;
@@ -146,7 +144,7 @@ void mainmenu(RenderWindow& window)
     Text inputText;
     inputText.setFont(font);
     inputText.setCharacterSize(25);
-    inputText.setFillColor(Color::White);
+    inputText.setFillColor(Color::Black);
 
     RectangleShape textboxBackground;
     textboxBackground.setSize(Vector2f(590.f, 50.f));
@@ -155,13 +153,14 @@ void mainmenu(RenderWindow& window)
     backButton.setPosition(Vector2f(200, 520));
     nextButton.setPosition(Vector2f(850, 520));
 
-    inputText.setPosition(356.f, 10.f);
+    
 
     Text name("name:", font, 17);
     name.setFillColor(Color::White);
     name.setPosition(356.f, 199.f);
 
     textboxBackground.setPosition((window.getSize().x / 2.0) - (textboxBackground.getSize().x / 2.0), window.getSize().y / 3.0);
+    inputText.setPosition(textboxBackground.getPosition().x+10, textboxBackground.getPosition().y+10);
 
     while (window.isOpen())
     {
@@ -178,9 +177,9 @@ void mainmenu(RenderWindow& window)
                 {
                     return;
                 }
-                if (nextButton.buttonClicked(window))
+                if (nextButton.buttonClicked(window)&&!input.empty())
                 {
-                    cout << "Next button clicked" << endl;
+                    game(window, input);
                 }
             }
             else if (event.type == Event::TextEntered)

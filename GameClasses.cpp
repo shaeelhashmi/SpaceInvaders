@@ -106,7 +106,7 @@ public:
             generated = false;
         }
         size = (rand() % 2) + 1;
-        asteroid.setScale(Vector2f(30 * size, 30 * size));
+        asteroid.setScale(Vector2f(50 * size, 50 * size));
         asteroid.setPosition(Vector2f(rand() % window.getSize().x-100, 0));
         if ((asteroid.getPosition().x + Corners < window.getSize().x / 2)) {
             asteroid.move(Corners, 0);
@@ -114,6 +114,9 @@ public:
         else {
             asteroid.move(-1 * Corners, 0);
         }
+    }
+    void setRandomPosition(RenderWindow& window) {
+        asteroid.setPosition(Vector2f(rand() % window.getSize().x-100, 0));
     }
     void SetTexture(string filePath) {
         asteroid.SetTexture(filePath);
@@ -223,5 +226,29 @@ public:
     }
     int getHits(){
         return hits;
+    }
+};
+class AirStrikeMinion{
+    Picture minion;
+    public:
+    AirStrikeMinion(RenderWindow& window,string minionText):minion(minionText){
+        minion.setScale(Vector2f(window.getSize().x * 0.082, window.getSize().y * 0.009));
+        minion.setPosition(Vector2f(window.getSize().x-100, 100));
+    }
+    void setStartingPosition(RenderWindow& window){
+        minion.setPosition(Vector2f(window.getSize().x-100, 100));
+    }
+    void script(RenderWindow& window){
+        minion.move(-4,0);
+        drawTo(window);
+    }
+    void drawTo(RenderWindow& window){
+        minion.drawTo(window);
+    }
+    Vector2f getPosition(){
+        return minion.getPosition();
+    }
+    void setPosition(Vector2f position){
+        minion.setPosition(position);
     }
 };
