@@ -9,8 +9,63 @@
 #include <iostream>
 using namespace std;
 using namespace sf;
+class Button {
+    public:
+    Button(string t, Vector2f size, int charSize, Color bgColor, Color textColor, float offset = 1)
+        : offset(offset) {
+        text.setString(t);
+        text.setFillColor(textColor);
+        text.setCharacterSize(charSize);
+        button.setSize(size);
+        button.setFillColor(bgColor);
+    }
+    void setFont(Font& font) {
+        text.setFont(font);
+    }
+    void setBackColor(Color color) {
+        button.setFillColor(color);
+    }
+    void setTextColor(Color color) {
+        text.setFillColor(color);
+    }
+    void setPosition(Vector2f pos) {
+        button.setPosition(pos);
+        float xPos = pos.x + (button.getLocalBounds().width - text.getLocalBounds().width) / 2;
+        float yPos = pos.y + (button.getLocalBounds().height - text.getLocalBounds().height) / 2;
+        yPos -= offset;
+        text.setPosition(xPos, yPos);
+    }
+    Vector2f getPosition() const {
+        return button.getPosition();
+    }
+    Vector2f getSize() const {
+        return button.getSize();
+    }
+    void drawTo(RenderWindow& window) {
+        window.draw(button);
+        window.draw(text);
+    }
+    bool buttonClicked(RenderWindow& window) {
+        Vector2f mousePos = window.mapPixelToCoords(Mouse::getPosition(window));
+
+        return button.getGlobalBounds().contains(mousePos);
+    }
+    void leftalign(Vector2f pos, float textOffset) {
+        button.setPosition(pos);
+        float xPos = pos.x + textOffset;
+        float yPos = (pos.y + button.getLocalBounds().height / 2) - (text.getLocalBounds().height / 2);
+        text.setPosition(xPos, yPos);
+    }
+    Text getText() {
+        return text;
+    }
+    private:
+    RectangleShape button;
+    Text text;
+    float offset;
+};
 class Picture {
-public:
+    public:
     Picture(string filePath) {
         texture.loadFromFile(filePath);
         sprite.setTexture(texture);
@@ -53,7 +108,7 @@ public:
         sprite.rotate(angle);
     }
 
-private:
+    private:
     sf::Texture texture;
     sf::Sprite sprite;
 };
@@ -61,7 +116,7 @@ private:
 class Spaceship {
     Picture spaceship;
 
-public:
+    public:
     Spaceship(RenderWindow& window) : spaceship("Spaceship.png") {
         spaceship.setScale(Vector2f(window.getSize().x * 0.082, window.getSize().y * 0.134));
         spaceship.setPosition(Vector2f((window.getSize().x / 2) - 100, window.getSize().y - 115));
@@ -75,8 +130,8 @@ public:
     bool checkright(RenderWindow& window, double move) {
         return spaceship.getPosition().x + move < window.getSize().x - 100;
     }
-bool checkUp(double move,RenderWindow& window) {
-        return spaceship.getPosition().y - move > window.getSize().y/2;
+    bool checkUp(double move, RenderWindow& window) {
+        return spaceship.getPosition().y - move > window.getSize().y / 2;
     }
     bool checkdown(RenderWindow& window, double move) {
         return spaceship.getPosition().y + move < window.getSize().y - 111;
@@ -101,19 +156,18 @@ bool checkUp(double move,RenderWindow& window) {
 class Asteroid {
     Picture asteroid;
     int size;
- 
 
-public:
-   static bool generated;
-    Asteroid(RenderWindow& window, string Filepath, double Corners) : asteroid(Filepath) {     
-        if(generated)
-        {
+
+    public:
+    static bool generated;
+    Asteroid(RenderWindow& window, string Filepath, double Corners) : asteroid(Filepath) {
+        if (generated) {
             srand(time(nullptr));
             generated = false;
         }
         size = (rand() % 2) + 1;
         asteroid.setScale(Vector2f(50 * size, 50 * size));
-        asteroid.setPosition(Vector2f(rand() % window.getSize().x-100, 0));
+        asteroid.setPosition(Vector2f(rand() % window.getSize().x - 100, 0));
         if ((asteroid.getPosition().x + Corners < window.getSize().x / 2)) {
             asteroid.move(Corners, 0);
         }
@@ -122,7 +176,7 @@ public:
         }
     }
     void setRandomPosition(RenderWindow& window) {
-        asteroid.setPosition(Vector2f(rand() % window.getSize().x-100, 0));
+        asteroid.setPosition(Vector2f(rand() % window.getSize().x - 100, 0));
     }
     void setRandomSize() {
         size = (rand() % 2) + 1;
@@ -155,8 +209,8 @@ bool Asteroid::generated = true;
 class Bullets {
     Picture bullet;
 
-public:
-    Bullets(RenderWindow& window,string Texture) : bullet(Texture) {
+    public:
+    Bullets(RenderWindow& window, string Texture) : bullet(Texture) {
         bullet.setScale(Vector2f(window.getSize().x * 0.01239, window.getSize().y * 0.04103));
     }
     void move(RenderWindow& window) {
@@ -187,31 +241,30 @@ class Boss {
     Picture boss;
     Clock changeMovement;
     int hits;
-    bool generated ;
-public:
+    bool generated;
+    public:
     Boss(RenderWindow& window, string bossText) : boss(bossText) {
         boss.setScale(Vector2f(window.getSize().x * 0.082, window.getSize().y * 0.134));
         boss.setPosition(Vector2f((window.getSize().x / 2) - 100, 0));
-        hits=0;
+        hits = 0;
         generated = true;
     }
 
-    void script(RenderWindow& window,Spaceship &spaceship,int TeleportationTime) {
-        if(generated)
-        {
+    void script(RenderWindow& window, Spaceship& spaceship, int TeleportationTime) {
+        if (generated) {
             srand(time(nullptr));
             generated = false;
         }
         if (changeMovement.getElapsedTime().asSeconds() > TeleportationTime) {
             float positionX = spaceship.getPosition().x;
-            float positionY = (rand() % window.getSize().y / 4)+100;
+            float positionY = (rand() % window.getSize().y / 4) + 100;
             boss.setPosition(Vector2f(positionX, positionY));
             changeMovement.restart();
         }
         drawTo(window);
 
     }
-    void incrementHits(){
+    void incrementHits() {
         hits++;
     }
     void drawTo(RenderWindow& window) {
@@ -220,45 +273,44 @@ public:
     Vector2f getPosition() {
         return boss.getPosition();
     }
-     FloatRect getGlobalBounds() {
+    FloatRect getGlobalBounds() {
         return boss.getGlobalBounds();
     }
-    void Follow(Spaceship &spaceship,double movement)
-    {
+    void Follow(Spaceship& spaceship, double movement) {
         int spaceshipPosX = spaceship.getPosition().x;
         int bossPosX = boss.getPosition().x;
-        if(spaceshipPosX>bossPosX){
-            boss.move(movement,0);
+        if (spaceshipPosX > bossPosX) {
+            boss.move(movement, 0);
         }
-        else if(spaceshipPosX<bossPosX){
-            boss.move(-movement,0);
-        }  
+        else if (spaceshipPosX < bossPosX) {
+            boss.move(-movement, 0);
+        }
     }
-    int getHits(){
+    int getHits() {
         return hits;
     }
 };
-class AirStrikeMinion{
+class AirStrikeMinion {
     Picture minion;
     public:
-    AirStrikeMinion(RenderWindow& window,string minionText):minion(minionText){
+    AirStrikeMinion(RenderWindow& window, string minionText) :minion(minionText) {
         minion.setScale(Vector2f(window.getSize().x * 0.082, window.getSize().y * 0.009));
-        minion.setPosition(Vector2f(window.getSize().x-100, 100));
+        minion.setPosition(Vector2f(window.getSize().x - 100, 100));
     }
-    void setStartingPosition(RenderWindow& window){
-        minion.setPosition(Vector2f(window.getSize().x-100, 100));
+    void setStartingPosition(RenderWindow& window) {
+        minion.setPosition(Vector2f(window.getSize().x - 100, 100));
     }
-    void script(RenderWindow& window){
-        minion.move(-4,0);
+    void script(RenderWindow& window) {
+        minion.move(-4, 0);
         drawTo(window);
     }
-    void drawTo(RenderWindow& window){
+    void drawTo(RenderWindow& window) {
         minion.drawTo(window);
     }
-    Vector2f getPosition(){
+    Vector2f getPosition() {
         return minion.getPosition();
     }
-    void setPosition(Vector2f position){
+    void setPosition(Vector2f position) {
         minion.setPosition(position);
     }
 };
