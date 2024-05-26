@@ -1,34 +1,33 @@
 #include "bossFight.cpp"
+
 using namespace std;
 using namespace sf;
 
 void game(RenderWindow& window, string username) {
     Spaceship spaceship(window);
-    //This is for playing a sound when the bullet is shot
-    SoundBuffer bulletSoundbuffer;
-    bulletSoundbuffer.loadFromFile("audios/BulletShoot.wav");
-    Sound bulletSound(bulletSoundbuffer);
-    //This is for playing a sound when the asteroid is destroyed
-    SoundBuffer asteroidSoundbuffer;
-    asteroidSoundbuffer.loadFromFile("audios/AsteroidExplosion.wav");
-    Sound asteroidSound(asteroidSoundbuffer);
-   
     Bullets bullet(window, "bullets.png");
     Picture hearts[5] = { Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png") };
+    Asteroid as(window, "Asteroid.png", spaceship.getSize().x);
+    Boss b1(window, "Spaceship.png");
+    string settings[3];
+
     int levels = 1;
     int shootedAsteroids = 0;
+
     Clock clock;
-    Asteroid as(window, "Asteroid.png", spaceship.getSize().x);
     // The clock for the multiplier to end
     Clock endMultiplier;
     Clock asteroidClock;
-    Boss b1(window, "Spaceship.png");
+
     vector<Bullets> bullets;
     vector<Asteroid> asteroids;
+
     // This array will store the exploded array
     vector<Asteroid> explodedAsteroids;
+
     // This vector will store the time for each exploded asteroid
     vector<Clock> explodedAsteroidsTime;
+
     // This will be increased for every asteroid destroyed
     bool changelevel = false;
     int heart = 5;
@@ -39,6 +38,7 @@ void game(RenderWindow& window, string username) {
     int highScore = 0;
     vector<pair<int, string>> highScores; // Pair to store high scores with usernames
 
+    ifstream settingsFile("settings.txt");
     ifstream HighScoreInput("highscore.txt");
     if (HighScoreInput.is_open()) {
         string line;
@@ -52,12 +52,22 @@ void game(RenderWindow& window, string username) {
         }
         HighScoreInput.close();
 
+        if (settingsFile.is_open()) {
+            string line;
+            int i = 0;
+            while (getline(settingsFile, line)) {
+                settings[i++] = line;
+            }
+        }
+        HighScoreInput.close();
+
         // Sort high scores in descending order
         sort(highScores.rbegin(), highScores.rend());
         if (!highScores.empty()) {
             highScore = highScores[0].first;
         }
-    } else {
+    }
+    else {
         cout << "File is not open" << endl;
     }
 
@@ -65,7 +75,7 @@ void game(RenderWindow& window, string username) {
     if (!font.loadFromFile("AGENCYR.ttf")) {
         cout << "Error loading font" << endl;
     }
-    Text scoretxt, highscoretxt, levelsTxt,Multiplier;
+    Text scoretxt, highscoretxt, levelsTxt;
     scoretxt.setFont(font);
     scoretxt.setCharacterSize(24);
     scoretxt.setFillColor(Color::White);
@@ -81,11 +91,6 @@ void game(RenderWindow& window, string username) {
     levelsTxt.setFillColor(Color::White);
     levelsTxt.setPosition(window.getSize().x - 150, 80);
 
-    Multiplier.setFont(font);
-    Multiplier.setCharacterSize(24);
-    Multiplier.setFillColor(Color::White);
-    Multiplier.setPosition(window.getSize().x - 150, 120);
-
     for (int i = 0; i < 5; i++) {
         hearts[i].setScale(Vector2f(40, 40));
     }
@@ -96,7 +101,7 @@ void game(RenderWindow& window, string username) {
     }
 
     while (window.isOpen()) {
-            
+        window.setFramerateLimit(stoi(settings[2]));
         if (score > highScore) {
             highScore = score;
         }
@@ -107,22 +112,25 @@ void game(RenderWindow& window, string username) {
                 level1Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement);
                 changelevel = false;
             }
-        } else if (levels == 10) {
+        }
+        else if (levels == 10) {
             changelevel = true;
             if (asteroids.size() == 0) {
                 level2Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement);
                 changelevel = false;
             }
-        } else if (levels == 15) {
+        }
+        else if (levels == 15) {
             changelevel = true;
             if (asteroids.size() == 0) {
-                level3Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement, as, asteroids, explodedAsteroids, explodedAsteroidsTime, asteroidClock, multiplier, endMultiplier,Multiplier);
+                level3Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement, as, asteroids, explodedAsteroids, explodedAsteroidsTime, asteroidClock, multiplier, endMultiplier);
                 changelevel = false;
             }
-        } else if (levels == 20) {
+        }
+        else if (levels == 20) {
             changelevel = true;
             if (asteroids.size() == 0) {
-                level4Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement, as, asteroids, explodedAsteroids, explodedAsteroidsTime, asteroidClock, multiplier, endMultiplier,Multiplier);
+                level4Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement, as, asteroids, explodedAsteroids, explodedAsteroidsTime, asteroidClock, multiplier, endMultiplier);
                 changelevel = false;
             }
         }
@@ -133,7 +141,6 @@ void game(RenderWindow& window, string username) {
             }
         }
         if (event.key.code == Keyboard::Space && (clock.getElapsedTime().asSeconds() > 1 || a)) {
-            bulletSound.play();
             bullet.SetPosition((spaceship.getPosition().x) + 50, spaceship.getPosition().y - 10);
             bullets.push_back(bullet);
             bullet.drawTo(window);
@@ -162,7 +169,8 @@ void game(RenderWindow& window, string username) {
         for (int i = 0; i < bullets.size(); i++) {
             if (bullets[i].getPosition().y < 0) {
                 bullets.erase(bullets.begin() + i);
-            } else {
+            }
+            else {
                 bullets[i].move(0, window.getSize().y * -0.02);
                 bullets[i].drawTo(window);
             }
@@ -181,14 +189,14 @@ void game(RenderWindow& window, string username) {
             for (int j = 0; j < bullets.size(); j++) {
                 if (asteroids[i].getGlobalBounds().intersects(bullets[j].getGlobalBounds())) {
                     Clock c;
-                    asteroidSound.play();
                     asteroids[i].SetTexture("AsteroidDestructions.png");
                     explodedAsteroids.push_back(asteroids[i]);
                     explodedAsteroidsTime.push_back(c);
                     int asteroidSize = asteroids[i].getSizeValue();
                     if (asteroidSize == 1) {
                         score += 5 * multiplier;
-                    } else if (asteroidSize == 2) {
+                    }
+                    else if (asteroidSize == 2) {
                         score += 10 * multiplier;
                     }
                     asteroids.erase(asteroids.begin() + i);
@@ -215,7 +223,8 @@ void game(RenderWindow& window, string username) {
             if (explodedAsteroidsTime[i].getElapsedTime().asSeconds() > 1) {
                 explodedAsteroids.erase(explodedAsteroids.begin() + i);
                 explodedAsteroidsTime.erase(explodedAsteroidsTime.begin() + i);
-            } else {
+            }
+            else {
                 explodedAsteroids[i].SetTexture("AsteroidDestructions.png");
                 explodedAsteroids[i].drawTo(window);
             }
@@ -227,7 +236,7 @@ void game(RenderWindow& window, string username) {
         // Ending the game
         if (heart <= 0) {
             cout << "GAME OVER" << endl;
-            
+
             // Update high scores
             highScores.push_back(make_pair(score, username));
             sort(highScores.rbegin(), highScores.rend());
@@ -246,11 +255,13 @@ void game(RenderWindow& window, string username) {
         scoretxt.setString("Score: " + to_string(score));
         highscoretxt.setString("High Score: " + to_string(highScore));
         levelsTxt.setString("Level: " + to_string(levels));
-        Multiplier.setString("Multiplier: " + to_string(multiplier));
         window.draw(scoretxt);
         window.draw(highscoretxt);
         window.draw(levelsTxt);
-        window.draw(Multiplier);
         window.display();
     }
+}
+int main() {
+    RenderWindow window(VideoMode::getDesktopMode(), "Space Invaders", Style::Close | Style::Fullscreen);
+    game(window, "Mujtaba");
 }
