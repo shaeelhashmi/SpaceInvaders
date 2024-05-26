@@ -118,6 +118,10 @@ public:
     void setRandomPosition(RenderWindow& window) {
         asteroid.setPosition(Vector2f(rand() % window.getSize().x-100, 0));
     }
+    void setRandomSize() {
+        size = (rand() % 2) + 1;
+        asteroid.setScale(Vector2f(50 * size, 50 * size));
+    }
     void SetTexture(string filePath) {
         asteroid.SetTexture(filePath);
     }

@@ -397,6 +397,7 @@
        
         if (asteroidClock.getElapsedTime().asSeconds() > 3.0f) {
             as.setRandomPosition(window);
+            as.setRandomSize();
             asteroids.push_back(as);
             asteroidClock.restart();
             
@@ -603,6 +604,7 @@
        
         if (asteroidClock.getElapsedTime().asSeconds() > 3.0f) {
             as.setRandomPosition(window);
+            as.setRandomSize();
             asteroids.push_back(as);
             asteroidClock.restart();
             
@@ -658,10 +660,10 @@
             if(bullets[i].getGlobalBounds().intersects(b1.getGlobalBounds())){
                 b1.incrementHits();
                 bullets.erase(bullets.begin()+i); 
-                if(b1.getHits()==8)
+                if(b1.getHits()==15)
                 {
                     levels++;
-                    score+=500;
+                    score+=2000;
                     a=true;
                 }               
             }
