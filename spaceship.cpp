@@ -1,10 +1,5 @@
 #include "bossFight.cpp"
-#include <cstring>
-#include <string>
-#include <vector>
-#include <algorithm>
-#include <fstream>
-#include <iostream>
+
 using namespace std;
 using namespace sf;
 

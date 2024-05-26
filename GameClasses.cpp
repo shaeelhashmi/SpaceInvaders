@@ -1,9 +1,11 @@
 #include <SFML/Graphics.hpp>
-#include <iostream>
-#include <vector>
-#include <string>
 #include <ctime>
 #include <fstream>
+#include <cstring>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <iostream>
 using namespace std;
 using namespace sf;
 class Picture {
