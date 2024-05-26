@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <ctime>
 #include <fstream>
 #include <cstring>
@@ -64,6 +65,9 @@ public:
     Spaceship(RenderWindow& window) : spaceship("Spaceship.png") {
         spaceship.setScale(Vector2f(window.getSize().x * 0.082, window.getSize().y * 0.134));
         spaceship.setPosition(Vector2f((window.getSize().x / 2) - 100, window.getSize().y - 115));
+    }
+    void setPosition(Vector2f position) {
+        spaceship.setPosition(position);
     }
     bool checkleft(double move) {
         return spaceship.getPosition().x - move > 0;

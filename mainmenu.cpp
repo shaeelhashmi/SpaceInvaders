@@ -41,6 +41,7 @@ public:
     }
     bool buttonClicked(RenderWindow& window) {
         Vector2f mousePos = window.mapPixelToCoords(Mouse::getPosition(window));
+
         return button.getGlobalBounds().contains(mousePos);
     }
     void leftalign(Vector2f pos, float textOffset)
@@ -126,7 +127,7 @@ void displayHighScore(RenderWindow& window)
         Exit.leftalign(Vector2f((window.getSize().x/2)-(Exit.getSize().x/2)+20, pos),Exit.getSize().x/4);
         Exit.setFont(font);
     while(window.isOpen())
-    {
+    {        
         window.clear();
         Event event;
         while(window.pollEvent(event))

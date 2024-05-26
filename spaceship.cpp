@@ -1,10 +1,18 @@
 #include "bossFight.cpp"
-
 using namespace std;
 using namespace sf;
 
 void game(RenderWindow& window, string username) {
     Spaceship spaceship(window);
+    //This is for playing a sound when the bullet is shot
+    SoundBuffer bulletSoundbuffer;
+    bulletSoundbuffer.loadFromFile("audios/BulletShoot.wav");
+    Sound bulletSound(bulletSoundbuffer);
+    //This is for playing a sound when the asteroid is destroyed
+    SoundBuffer asteroidSoundbuffer;
+    asteroidSoundbuffer.loadFromFile("audios/AsteroidExplosion.wav");
+    Sound asteroidSound(asteroidSoundbuffer);
+   
     Bullets bullet(window, "bullets.png");
     Picture hearts[5] = { Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png") };
     int levels = 1;
@@ -57,7 +65,7 @@ void game(RenderWindow& window, string username) {
     if (!font.loadFromFile("AGENCYR.ttf")) {
         cout << "Error loading font" << endl;
     }
-    Text scoretxt, highscoretxt, levelsTxt;
+    Text scoretxt, highscoretxt, levelsTxt,Multiplier;
     scoretxt.setFont(font);
     scoretxt.setCharacterSize(24);
     scoretxt.setFillColor(Color::White);
@@ -73,6 +81,11 @@ void game(RenderWindow& window, string username) {
     levelsTxt.setFillColor(Color::White);
     levelsTxt.setPosition(window.getSize().x - 150, 80);
 
+    Multiplier.setFont(font);
+    Multiplier.setCharacterSize(24);
+    Multiplier.setFillColor(Color::White);
+    Multiplier.setPosition(window.getSize().x - 150, 120);
+
     for (int i = 0; i < 5; i++) {
         hearts[i].setScale(Vector2f(40, 40));
     }
@@ -83,6 +96,7 @@ void game(RenderWindow& window, string username) {
     }
 
     while (window.isOpen()) {
+            
         if (score > highScore) {
             highScore = score;
         }
@@ -102,13 +116,13 @@ void game(RenderWindow& window, string username) {
         } else if (levels == 15) {
             changelevel = true;
             if (asteroids.size() == 0) {
-                level3Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement, as, asteroids, explodedAsteroids, explodedAsteroidsTime, asteroidClock, multiplier, endMultiplier);
+                level3Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement, as, asteroids, explodedAsteroids, explodedAsteroidsTime, asteroidClock, multiplier, endMultiplier,Multiplier);
                 changelevel = false;
             }
         } else if (levels == 20) {
             changelevel = true;
             if (asteroids.size() == 0) {
-                level4Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement, as, asteroids, explodedAsteroids, explodedAsteroidsTime, asteroidClock, multiplier, endMultiplier);
+                level4Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement, as, asteroids, explodedAsteroids, explodedAsteroidsTime, asteroidClock, multiplier, endMultiplier,Multiplier);
                 changelevel = false;
             }
         }
@@ -119,6 +133,7 @@ void game(RenderWindow& window, string username) {
             }
         }
         if (event.key.code == Keyboard::Space && (clock.getElapsedTime().asSeconds() > 1 || a)) {
+            bulletSound.play();
             bullet.SetPosition((spaceship.getPosition().x) + 50, spaceship.getPosition().y - 10);
             bullets.push_back(bullet);
             bullet.drawTo(window);
@@ -166,6 +181,7 @@ void game(RenderWindow& window, string username) {
             for (int j = 0; j < bullets.size(); j++) {
                 if (asteroids[i].getGlobalBounds().intersects(bullets[j].getGlobalBounds())) {
                     Clock c;
+                    asteroidSound.play();
                     asteroids[i].SetTexture("AsteroidDestructions.png");
                     explodedAsteroids.push_back(asteroids[i]);
                     explodedAsteroidsTime.push_back(c);
@@ -230,9 +246,11 @@ void game(RenderWindow& window, string username) {
         scoretxt.setString("Score: " + to_string(score));
         highscoretxt.setString("High Score: " + to_string(highScore));
         levelsTxt.setString("Level: " + to_string(levels));
+        Multiplier.setString("Multiplier: " + to_string(multiplier));
         window.draw(scoretxt);
         window.draw(highscoretxt);
         window.draw(levelsTxt);
+        window.draw(Multiplier);
         window.display();
     }
 }

@@ -2,7 +2,15 @@
 //This is the first boss that will spawn after the first 4 levels
    void level1Boss(RenderWindow& window,int &levels,Spaceship &spaceship,vector<Bullets> &bullets,int &heart,int &score,int highScore,Picture hearts[],Text &scoretxt,Text &highscoretxt,Text &levelsTxt,Bullets &bullet,Clock &clock
     ,double movement){
+        spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
         window.clear();
+        //Creating bullet sound
+        SoundBuffer bulletBuffer;
+        if (!bulletBuffer.loadFromFile("audios/BulletShoot.wav")) {
+            cout << "Error loading bullet sound" << endl;
+        }
+        Sound bulletSound;
+        bulletSound.setBuffer(bulletBuffer);
         bool a=false;
         Boss b1(window,"Boss.png");
         Clock bossShoot;
@@ -30,6 +38,7 @@
             }
         }
         if (event.key.code == Keyboard::Space && (clock.getElapsedTime().asSeconds() > 1 )) {
+            bulletSound.play();
             bullet.SetPosition((spaceship.getPosition().x)+50 , spaceship.getPosition().y - 10);
             bullets.push_back(bullet);
             bullet.drawTo(window);
@@ -146,11 +155,19 @@
             window.draw(Outro);
             window.display();
         }
+        spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
     }
     void level2Boss(RenderWindow& window,int &levels,Spaceship &spaceship,vector<Bullets> &bullets,int &heart,int &score,int highScore,Picture hearts[],Text &scoretxt,Text &highscoretxt,Text &levelsTxt,Bullets &bullet,Clock &clock
     ,double movement)
     {
-         window.clear();
+        window.clear();
+        spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
+          SoundBuffer bulletBuffer;
+        if (!bulletBuffer.loadFromFile("audios/BulletShoot.wav")) {
+            cout << "Error loading bullet sound" << endl;
+        }
+        Sound bulletSound;
+        bulletSound.setBuffer(bulletBuffer);
         bool a=false;
         Boss b1(window,"Boss.png");
         Clock bossShoot;
@@ -178,6 +195,7 @@
             }
         }
         if (event.key.code == Keyboard::Space && (clock.getElapsedTime().asSeconds() > 1 )) {
+            bulletSound.play();
             bullet.SetPosition((spaceship.getPosition().x)+50 , spaceship.getPosition().y - 10);
             bullets.push_back(bullet);
             bullet.drawTo(window);
@@ -294,10 +312,23 @@
             window.draw(Outro);
             window.display();
         }
+        spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
     }
-    void level3Boss(RenderWindow& window,int &levels,Spaceship &spaceship,vector<Bullets> &bullets,int &heart,int &score,int highScore,Picture hearts[],Text &scoretxt,Text &highscoretxt,Text &levelsTxt,Bullets &bullet,Clock &clock,double movement,Asteroid &as,vector<Asteroid> &asteroids,vector<Asteroid> &explodedAsteroids,vector<Clock> &explodedAsteroidsTime,Clock &asteroidClock,int &multiplier,Clock &endMultiplier)
+    void level3Boss(RenderWindow& window,int &levels,Spaceship &spaceship,vector<Bullets> &bullets,int &heart,int &score,int highScore,Picture hearts[],Text &scoretxt,Text &highscoretxt,Text &levelsTxt,Bullets &bullet,Clock &clock,double movement,Asteroid &as,vector<Asteroid> &asteroids,vector<Asteroid> &explodedAsteroids,vector<Clock> &explodedAsteroidsTime,Clock &asteroidClock,int &multiplier,Clock &endMultiplier,Text &Multiplier)
     {
-         window.clear();
+        window.clear();
+        int temp=multiplier;
+          SoundBuffer bulletBuffer;
+        if (!bulletBuffer.loadFromFile("audios/BulletShoot.wav")) {
+            cout << "Error loading bullet sound" << endl;
+        }
+        Sound bulletSound;
+          SoundBuffer asteroidSoundbuffer;
+    asteroidSoundbuffer.loadFromFile("audios/AsteroidExplosion.wav");
+    Sound asteroidSound(asteroidSoundbuffer);
+
+        bulletSound.setBuffer(bulletBuffer);
+        spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
         bool a=false;
         Boss b1(window,"Boss.png");
         Clock bossShoot;
@@ -316,6 +347,7 @@
             window.display();
         }
         window.clear();
+        multiplier=temp;
         while(window.isOpen())
         {
             Event event;
@@ -325,6 +357,7 @@
             }
         }
         if (event.key.code == Keyboard::Space && (clock.getElapsedTime().asSeconds() > 1 )) {
+            bulletSound.play();
             bullet.SetPosition((spaceship.getPosition().x)+50 , spaceship.getPosition().y - 10);
             bullets.push_back(bullet);
             bullet.drawTo(window);
@@ -373,6 +406,7 @@
             }
             for (int j = 0; j < bullets.size(); j++) {
                 if (asteroids[i].getGlobalBounds().intersects(bullets[j].getGlobalBounds())) {
+                    asteroidSound.play();
                     Clock c;
                     asteroids[i].SetTexture("AsteroidDestructions.png");
                     explodedAsteroids.push_back(asteroids[i]);
@@ -477,13 +511,15 @@
             }
             window.close();
         }
-        scoretxt.setString("Score: " + to_string(score));
+  scoretxt.setString("Score: " + to_string(score));
         highscoretxt.setString("High Score: " + to_string(highScore));
         levelsTxt.setString("Level: " + to_string(levels));
+        Multiplier.setString("Multiplier: " + to_string(multiplier));
         window.draw(scoretxt);
         window.draw(highscoretxt);
         window.draw(levelsTxt);
-        window.display();
+        window.draw(Multiplier);
+        window.display();   
         }
         window.clear();
         TextTimer.restart();
@@ -494,17 +530,31 @@
             window.draw(Outro);
             window.display();
         }
+        spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
     } 
-    void level4Boss(RenderWindow& window,int &levels,Spaceship &spaceship,vector<Bullets> &bullets,int &heart,int &score,int highScore,Picture hearts[],Text &scoretxt,Text &highscoretxt,Text &levelsTxt,Bullets &bullet,Clock &clock,double movement,Asteroid &as,vector<Asteroid> &asteroids,vector<Asteroid> &explodedAsteroids,vector<Clock> &explodedAsteroidsTime,Clock &asteroidClock,int &multiplier,Clock &endMultiplier)
+    void level4Boss(RenderWindow& window,int &levels,Spaceship &spaceship,vector<Bullets> &bullets,int &heart,int &score,int highScore,Picture hearts[],Text &scoretxt,Text &highscoretxt,Text &levelsTxt,Bullets &bullet,Clock &clock,double movement,Asteroid &as,vector<Asteroid> &asteroids,vector<Asteroid> &explodedAsteroids,vector<Clock> &explodedAsteroidsTime,Clock &asteroidClock,int &multiplier,Clock &endMultiplier,Text &Multiplier)
     {
-      window.clear();
-          bool startStrikebool = false;
-            AirStrikeMinion minion(window,"MinionShip.png");
-            vector<Bullets> minionBullets;
+    window.clear();
+    spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
+      SoundBuffer bulletBuffer;
+        if (!bulletBuffer.loadFromFile("audios/BulletShoot.wav")) {
+            cout << "Error loading bullet sound" << endl;
+        }
+        Sound bulletSound;
+        bulletSound.setBuffer(bulletBuffer);
+    SoundBuffer asteroidSoundbuffer;
+    asteroidSoundbuffer.loadFromFile("audios/AsteroidExplosion.wav");
+    Sound asteroidSound(asteroidSoundbuffer);
+
+    int temp=multiplier;
+    bool startStrikebool = false;
+   AirStrikeMinion minion(window,"MinionShip.png");
+    vector<Bullets> minionBullets;
             Bullets minionBullet(window,"AirBomb.png");
             Clock startStrike;
                 Clock minionShoot;
         bool a=false;
+        
         Boss b1(window,"Boss.png");
         Clock bossShoot;
         vector<Bullets> bossBullets;
@@ -522,6 +572,7 @@
             window.display();
         }
         window.clear();
+        multiplier=temp;
         while(window.isOpen())
         {
                    b1.Follow(spaceship,movement);
@@ -532,6 +583,7 @@
             }
         }
         if (event.key.code == Keyboard::Space && (clock.getElapsedTime().asSeconds() > 1 )) {
+            bulletSound.play();
             bullet.SetPosition((spaceship.getPosition().x)+50 , spaceship.getPosition().y - 10);
             bullets.push_back(bullet);
             bullet.drawTo(window);
@@ -581,6 +633,7 @@
             for (int j = 0; j < bullets.size(); j++) {
                 if (asteroids[i].getGlobalBounds().intersects(bullets[j].getGlobalBounds())) {
                     Clock c;
+                    asteroidSound.play();
                     asteroids[i].SetTexture("AsteroidDestructions.png");
                     explodedAsteroids.push_back(asteroids[i]);
                     explodedAsteroidsTime.push_back(c);
@@ -718,21 +771,24 @@
             }
             window.close();
         }
-        scoretxt.setString("Score: " + to_string(score));
+          scoretxt.setString("Score: " + to_string(score));
         highscoretxt.setString("High Score: " + to_string(highScore));
         levelsTxt.setString("Level: " + to_string(levels));
+        Multiplier.setString("Multiplier: " + to_string(multiplier));
         window.draw(scoretxt);
         window.draw(highscoretxt);
         window.draw(levelsTxt);
+        window.draw(Multiplier);
         window.display();   
     }
             window.clear();
         TextTimer.restart();
-        Text Outro = Text("Congratulations you have passed the Fourth boss fight", font, 50);                 
+        Text Outro = Text("Congratulations you have passed the last boss fight", font, 50);                 
         Outro.setPosition(Welcome.getPosition().x-300,Welcome.getPosition().y);
         
         while(TextTimer.getElapsedTime().asSeconds()<5){
             window.draw(Outro);
             window.display();
         }
+        spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
     }
