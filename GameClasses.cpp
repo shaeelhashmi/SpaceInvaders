@@ -314,3 +314,32 @@ class AirStrikeMinion {
         minion.setPosition(position);
     }
 };
+
+class SpecialAsteroid {
+    Picture specialast;
+
+public:
+    SpecialAsteroid(RenderWindow& window, string specialtex) : specialast(specialtex) {
+        specialast.setScale(Vector2f(50, 50));
+        specialast.setPosition(Vector2f(rand() % window.getSize().x-100, 0));
+    }
+    void setRandomPosition(RenderWindow& window) {
+        specialast.setPosition(Vector2f(rand() % window.getSize().x-100, 0));
+    }
+    void move(RenderWindow& window) {
+        float speed = 3.5f;
+        specialast.move(0, speed);
+    }
+    void drawTo(RenderWindow& window) {
+        specialast.drawTo(window);
+    }
+    Vector2f getPosition() {
+        return specialast.getPosition();
+    }
+    Vector2f getSize() {
+        return specialast.getSize();
+    }
+    FloatRect getGlobalBounds() {
+        return specialast.getGlobalBounds();
+    }
+};
