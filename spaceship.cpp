@@ -71,15 +71,15 @@ void game(RenderWindow& window, string username) {
     settingsFile.close();
     double asteroidTimer = 3;
     if (settings[1] == "hard") {
-        asteroidTimer = 3;
+        asteroidTimer = 2.5;
 
     }
     else if (settings[1] == "medium") {
-        asteroidTimer = 3.5;
+        asteroidTimer = 3;
 
     }
     else if (settings[1] == "easy") {
-        asteroidTimer = 4;
+        asteroidTimer = 3.5;
 
     }
     SoundBuffer bulletSoundbuffer;
@@ -146,28 +146,28 @@ void game(RenderWindow& window, string username) {
         if (levels == 5) {
             changelevel = true;
             if (asteroids.size() == 0) {
-                level1Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement);
+                level1Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement,settings);
                 changelevel = false;
             }
         }
         else if (levels == 10) {
             changelevel = true;
             if (asteroids.size() == 0) {
-                level2Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement);
+                level2Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement,settings);
                 changelevel = false;
             }
         }
         else if (levels == 15) {
             changelevel = true;
             if (asteroids.size() == 0) {
-                level3Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement, as, asteroids, explodedAsteroids, explodedAsteroidsTime, asteroidClock, multiplier, endMultiplier, Multiplier, settings[1]);
+                level3Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement, as, asteroids, explodedAsteroids, explodedAsteroidsTime, asteroidClock, multiplier, endMultiplier, Multiplier, settings);
                 changelevel = false;
             }
         }
         else if (levels == 20) {
             changelevel = true;
             if (asteroids.size() == 0) {
-                level4Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement, as, asteroids, explodedAsteroids, explodedAsteroidsTime, asteroidClock, multiplier, endMultiplier, Multiplier, settings[1]);
+                level4Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement, as, asteroids, explodedAsteroids, explodedAsteroidsTime, asteroidClock, multiplier, endMultiplier, Multiplier, settings);
                 changelevel = false;
             }
         }
@@ -340,4 +340,3 @@ void game(RenderWindow& window, string username) {
         window.display();
 }
 }
-

@@ -1,12 +1,36 @@
 #include "GameClasses.cpp"
 //This is the first boss that will spawn after the first 4 levels
-void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock
-    , double movement) {
+void setVal(double &bulletSpeed,double &teleportationTimer,string Setting[],RenderWindow &window){
+    if(Setting[1] == "easy"){
+         teleportationTimer = teleportationTimer+2.0;
+        bulletSpeed =window.getSize().y*(bulletSpeed-0.002);
+    }
+    else if(Setting[1] == "medium"){
+    teleportationTimer = teleportationTimer+2;
+       bulletSpeed=window.getSize().y*(bulletSpeed-0.002);
+    }
+    else if(Setting[1] == "hard"){
+        teleportationTimer = teleportationTimer;
+        bulletSpeed =window.getSize().y*(bulletSpeed-0.002);
+        cout<<bulletSpeed;
+    }
+}
+void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement,string Setting[]) {
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
+    double teleportationTimer = 10;
+    double bulletSpeed = 0.005;
+    setVal(bulletSpeed,teleportationTimer,Setting,window);
     //Creating bullet sound
     SoundBuffer bulletBuffer;
+    if(Setting[0]=="0")
+    {
+        bulletBuffer.loadFromFile("audios/NoSound.wav");
+    }
+    else
+    {
     if (!bulletBuffer.loadFromFile("audios/BulletShoot.wav")) {
         cout << "Error loading bullet sound" << endl;
+    }
     }
     Sound bulletSound;
     bulletSound.setBuffer(bulletBuffer);
@@ -43,7 +67,6 @@ void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
             bullet.drawTo(window);
             window.display();
             clock.restart();
-
             event.key.code = Keyboard::Unknown;
         }
         if ((Keyboard::isKeyPressed(Keyboard::A) || Keyboard::isKeyPressed(Keyboard::Left)) && spaceship.checkleft(movement)) {
@@ -73,7 +96,7 @@ void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
             }
         }
 
-        b1.script(window, spaceship, 10);
+        b1.script(window, spaceship, teleportationTimer);
         //This condition will check if the spaceship bullets has collided with the boss
         for (int i = 0;i < bullets.size();i++) {
             if (bullets[i].getGlobalBounds().intersects(b1.getGlobalBounds())) {
@@ -91,7 +114,6 @@ void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
             if (bossBullets[i].getGlobalBounds().intersects(spaceship.getGlobalBounds())) {
                 heart--;
                 bossBullets.erase(bossBullets.begin() + i);
-
             }
         }
         //This condition will check if the boss bullets are out of bounds
@@ -110,7 +132,7 @@ void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
         }
         for (int i = 0;i < bossBullets.size();i++) {
             if (bossBullets[i].getPosition().y > 0) {
-                bossBullets[i].move(0, window.getSize().y * 0.005);
+                bossBullets[i].move(0, bulletSpeed);
                 bossBullets[i].drawTo(window);
             }
             else {
@@ -122,18 +144,7 @@ void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
             hearts[i].drawTo(window);
         }
         if (heart <= 0) {
-            cout << "GAME OVER";
-
-            if (score > highScore) {
-                highScore = score;
-                ofstream HighScore("highscore.txt", ios::app);
-                if (HighScore.is_open()) {
-                    HighScore << highScore << "\n";
-                    HighScore.close();
-                }
-
-            }
-            window.close();
+            return;
         }
         scoretxt.setString("Score: " + to_string(score));
         highscoretxt.setString("High Score: " + to_string(highScore));
@@ -145,9 +156,7 @@ void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     }
     TextTimer.restart();
     Text Outro = Text("Congratulations you have passed the first boss fight", font, 50);
-
     Outro.setPosition(Welcome.getPosition().x - 300, Welcome.getPosition().y / 2);
-    window.clear();
     while (TextTimer.getElapsedTime().asSeconds() < 5) {
         window.clear();
         window.draw(Outro);
@@ -156,12 +165,21 @@ void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
 }
 void level2Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock
-    , double movement) {
-    window.clear();
+    , double movement,string Setting[]) {
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
+   double teleportationTimer = 8;
+    double bulletSpeed = 0.005;
+    setVal(bulletSpeed,teleportationTimer,Setting,window);
     SoundBuffer bulletBuffer;
+     if(Setting[0]=="0")
+    {
+        bulletBuffer.loadFromFile("audios/NoSound.wav");
+    }
+    else
+    {
     if (!bulletBuffer.loadFromFile("audios/BulletShoot.wav")) {
         cout << "Error loading bullet sound" << endl;
+    }
     }
     Sound bulletSound;
     bulletSound.setBuffer(bulletBuffer);
@@ -227,7 +245,7 @@ void level2Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
             }
         }
 
-        b1.script(window, spaceship, 10);
+        b1.script(window, spaceship, teleportationTimer);
         //This condition will check if the spaceship bullets has collided with the boss
         for (int i = 0;i < bullets.size();i++) {
             if (bullets[i].getGlobalBounds().intersects(b1.getGlobalBounds())) {
@@ -264,7 +282,7 @@ void level2Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
         }
         for (int i = 0;i < bossBullets.size();i++) {
             if (bossBullets[i].getPosition().y > 0) {
-                bossBullets[i].move(0, window.getSize().y * 0.005);
+                bossBullets[i].move(0, bulletSpeed);
                 bossBullets[i].drawTo(window);
             }
             else {
@@ -276,17 +294,7 @@ void level2Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
             hearts[i].drawTo(window);
         }
         if (heart <= 0) {
-            cout << "GAME OVER";
-
-            if (score > highScore) {
-                highScore = score;
-                ofstream HighScore("highscore.txt", ios::app);
-                if (HighScore.is_open()) {
-                    HighScore << highScore << "\n";
-                    HighScore.close();
-                }
-
-            }
+           return;
             window.close();
         }
         scoretxt.setString("Score: " + to_string(score));
@@ -309,16 +317,27 @@ void level2Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     }
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
 }
-void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement, Asteroid& as, vector<Asteroid>& asteroids, vector<Asteroid>& explodedAsteroids, vector<Clock>& explodedAsteroidsTime, Clock& asteroidClock, int& multiplier, Clock& endMultiplier, Text& Multiplier, string& difficulty) {
+void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement, Asteroid& as, vector<Asteroid>& asteroids, vector<Asteroid>& explodedAsteroids, vector<Clock>& explodedAsteroidsTime, Clock& asteroidClock, int& multiplier, Clock& endMultiplier, Text& Multiplier, string settings[]) {
     window.clear();
+   double teleportationTimer = 8;
+    double bulletSpeed = 0.007;
+    setVal(bulletSpeed,teleportationTimer,settings,window);
     int temp = multiplier;
     SoundBuffer bulletBuffer;
+    SoundBuffer asteroidSoundbuffer;
+   if(settings[0]=="0")
+    {
+        bulletBuffer.loadFromFile("audios/NoSound.wav");
+        asteroidSoundbuffer.loadFromFile("audios/NoSound.wav");
+    }
+    else
+    {
     if (!bulletBuffer.loadFromFile("audios/BulletShoot.wav")) {
         cout << "Error loading bullet sound" << endl;
     }
-    Sound bulletSound;
-    SoundBuffer asteroidSoundbuffer;
     asteroidSoundbuffer.loadFromFile("audios/AsteroidExplosion.wav");
+    }
+    Sound bulletSound; 
     Sound asteroidSound(asteroidSoundbuffer);
 
     bulletSound.setBuffer(bulletBuffer);
@@ -387,7 +406,7 @@ void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
         }
         for (int i = 0; i < asteroids.size(); i++) {
             asteroids[i].SetTexture("Asteroid.png");
-            asteroids[i].move(window, levels,difficulty);
+            asteroids[i].move(window, levels,settings[1]);
             asteroids[i].drawTo(window);
             if (spaceship.getGlobalBounds().intersects(asteroids[i].getGlobalBounds())) {
                 heart--;
@@ -457,7 +476,6 @@ void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
             if (bossBullets[i].getGlobalBounds().intersects(spaceship.getGlobalBounds())) {
                 heart -= 2;
                 bossBullets.erase(bossBullets.begin() + i);
-
             }
         }
         //This condition will check if the boss bullets are out of bounds
@@ -476,7 +494,7 @@ void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
         }
         for (int i = 0;i < bossBullets.size();i++) {
             if (bossBullets[i].getPosition().y > 0) {
-                bossBullets[i].move(0, window.getSize().y * 0.005);
+                bossBullets[i].move(0,bulletSpeed);
                 bossBullets[i].drawTo(window);
             }
             else {
@@ -488,18 +506,7 @@ void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
             hearts[i].drawTo(window);
         }
         if (heart <= 0) {
-            cout << "GAME OVER";
-
-            if (score > highScore) {
-                highScore = score;
-                ofstream HighScore("highscore.txt", ios::app);
-                if (HighScore.is_open()) {
-                    HighScore << highScore << "\n";
-                    HighScore.close();
-                }
-
-            }
-            window.close();
+          return;
         }
         scoretxt.setString("Score: " + to_string(score));
         highscoretxt.setString("High Score: " + to_string(highScore));
@@ -523,19 +530,28 @@ void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     }
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
 }
-void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement, Asteroid& as, vector<Asteroid>& asteroids, vector<Asteroid>& explodedAsteroids, vector<Clock>& explodedAsteroidsTime, Clock& asteroidClock, int& multiplier, Clock& endMultiplier, Text& Multiplier, string& difficulty) {
-    window.clear();
+void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement, Asteroid& as, vector<Asteroid>& asteroids, vector<Asteroid>& explodedAsteroids, vector<Clock>& explodedAsteroidsTime, Clock& asteroidClock, int& multiplier, Clock& endMultiplier, Text& Multiplier, string settings[]) {
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
-    SoundBuffer bulletBuffer;
+    double teleportationTimer = 5;
+    double bulletSpeed = 0.009;
+    setVal(bulletSpeed,teleportationTimer,settings,window);
+      SoundBuffer bulletBuffer;
+    SoundBuffer asteroidSoundbuffer;
+   if(settings[0]=="0")
+    {
+        bulletBuffer.loadFromFile("audios/NoSound.wav");
+        asteroidSoundbuffer.loadFromFile("audios/NoSound.wav");
+    }
+    else
+    {
     if (!bulletBuffer.loadFromFile("audios/BulletShoot.wav")) {
         cout << "Error loading bullet sound" << endl;
     }
+    asteroidSoundbuffer.loadFromFile("audios/AsteroidExplosion.wav");
+    }  
     Sound bulletSound;
     bulletSound.setBuffer(bulletBuffer);
-    SoundBuffer asteroidSoundbuffer;
-    asteroidSoundbuffer.loadFromFile("audios/AsteroidExplosion.wav");
     Sound asteroidSound(asteroidSoundbuffer);
-
     int temp = multiplier;
     bool startStrikebool = false;
     AirStrikeMinion minion(window, "MinionShip.png");
@@ -609,7 +625,7 @@ void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
         }
         for (int i = 0; i < asteroids.size(); i++) {
             asteroids[i].SetTexture("Asteroid.png");
-            asteroids[i].move(window, levels,difficulty);
+            asteroids[i].move(window, levels,settings[1]);
             asteroids[i].drawTo(window);
             if (spaceship.getGlobalBounds().intersects(asteroids[i].getGlobalBounds())) {
                 heart--;
@@ -727,7 +743,7 @@ void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
         }
         for (int i = 0;i < bossBullets.size();i++) {
             if (bossBullets[i].getPosition().y > 0) {
-                bossBullets[i].move(0, window.getSize().y * 0.009);
+                bossBullets[i].move(0,bulletSpeed);
                 bossBullets[i].drawTo(window);
             }
             else {
@@ -739,18 +755,7 @@ void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
             hearts[i].drawTo(window);
         }
         if (heart <= 0) {
-            cout << "GAME OVER";
-
-            if (score > highScore) {
-                highScore = score;
-                ofstream HighScore("highscore.txt", ios::app);
-                if (HighScore.is_open()) {
-                    HighScore << highScore << "\n";
-                    HighScore.close();
-                }
-
-            }
-            window.close();
+        return;
         }
         scoretxt.setString("Score: " + to_string(score));
         highscoretxt.setString("High Score: " + to_string(highScore));
