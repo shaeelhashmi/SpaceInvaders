@@ -226,8 +226,12 @@ void game(RenderWindow& window, string username) {
             }
             for (int j = 0; j < bullets.size(); j++) {
                 if (asteroids[i].getGlobalBounds().intersects(bullets[j].getGlobalBounds())) {
-                    Clock c;
-                    asteroidSound.play();
+                    asteroids[i].incrementHits();
+                    bullets.erase(bullets.begin() + j);
+                    if(asteroids[i].asteroidDestroyed())
+                    {
+                        Clock c;
+                     asteroidSound.play();
                     asteroids[i].SetTexture("AsteroidDestructions.png");
                     explodedAsteroids.push_back(asteroids[i]);
                     explodedAsteroidsTime.push_back(c);
@@ -239,13 +243,15 @@ void game(RenderWindow& window, string username) {
                         score += 10 * multiplier;
                     }
                     asteroids.erase(asteroids.begin() + i);
-                    bullets.erase(bullets.begin() + j);
+                    
                     multiplier++;
                     endMultiplier.restart();
+                    }
+                    
                 }
             }
         }
-        if (shootedAsteroids == 5) {
+        if (shootedAsteroids >= 5) {
             levels++;
             shootedAsteroids = 0;
 

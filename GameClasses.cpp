@@ -156,8 +156,8 @@ class Spaceship {
 class Asteroid {
     Picture asteroid;
     int size;
-
-
+    int health;
+    int hits;
     public:
     static bool generated;
     Asteroid(RenderWindow& window, string Filepath, double Corners) : asteroid(Filepath) {
@@ -166,6 +166,8 @@ class Asteroid {
             generated = false;
         }
         size = (rand() % 2) + 1;
+        health = size;
+        hits=0;
         asteroid.setScale(Vector2f(50 * size, 50 * size));
         asteroid.setPosition(Vector2f(rand() % window.getSize().x - 100, 0));
         if ((asteroid.getPosition().x + Corners < window.getSize().x / 2)) {
@@ -180,6 +182,7 @@ class Asteroid {
     }
     void setRandomSize() {
         size = (rand() % 2) + 1;
+        health = size;
         asteroid.setScale(Vector2f(50 * size, 50 * size));
     }
     void SetTexture(string filePath) {
@@ -198,6 +201,12 @@ class Asteroid {
             speed = window.getSize().y * 0.001 + (level * 0.006);
         }
         asteroid.move(0, speed);
+    }
+    void incrementHits() {
+        ++hits;
+    }
+    bool asteroidDestroyed() {
+        return hits >= health;
     }
     void drawTo(RenderWindow& window) {
         asteroid.drawTo(window);
