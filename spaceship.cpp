@@ -253,7 +253,6 @@ void game(RenderWindow& window, string username) {
     if (spaceship.getGlobalBounds().intersects(SpecialAste[i].getGlobalBounds())) {
         heart = 0;
         SpecialAste.erase(SpecialAste.begin() + i);
-        continue;
     }
     
     for (int j = 0; j < bullets.size(); j++) {
