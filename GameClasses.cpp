@@ -353,3 +353,46 @@ class SpecialAsteroid {
         return specialast.getGlobalBounds();
     }
 };
+bool GameOver(RenderWindow& window,int score) {
+    Button GoTomain("MAIN MENU", Vector2f(300, 80), 24, Color(141, 26, 22), Color::Black);
+    Button PlayAgain("PLAY AGAIN", Vector2f(300, 80), 24, Color(141, 26, 22), Color::Black);
+    Text GameOver;
+
+    Font font;
+    if (!font.loadFromFile("LEMONMILK-Medium.otf")) {
+        window.close();
+    }
+    GameOver = Text("Game Over", font, 50);
+    Text Score = Text("Score:"+to_string(score), font, 20);
+    GameOver.setPosition((window.getSize().x / 2.0) - 135, window.getSize().y / 2.0 - 100);
+    GoTomain.setFont(font);
+    PlayAgain.setFont(font);
+    Score.setPosition((window.getSize().x / 2.0) - 60, (window.getSize().y / 2.0));
+    GoTomain.setPosition(Vector2f((window.getSize().x / 2.0) - PlayAgain.getSize().x - 5, window.getSize().y / 2 + 100));
+    PlayAgain.setPosition(Vector2f((window.getSize().x / 2.0) + 5, window.getSize().y / 2 + 00));
+    while (window.isOpen()) {
+        window.clear();
+        GoTomain.drawTo(window);
+        PlayAgain.drawTo((window));
+        Event event;
+        while(window.pollEvent(event))
+        {
+            if(event.type==Event::Closed)
+            {
+                window.close();
+            }
+            if (event.type == Event::MouseButtonPressed) {
+                if (GoTomain.buttonClicked(window)) {
+                    return true;
+                }
+                if (PlayAgain.buttonClicked(window)) {
+                    return false;
+                }
+            }
+        }
+        window.draw(GameOver);
+        window.draw(Score);
+        window.display();
+    }
+   return true;
+}

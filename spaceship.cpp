@@ -7,13 +7,7 @@ using namespace sf;
 void game(RenderWindow& window, string username) {
     Spaceship spaceship(window);
     //This is for playing a sound when the bullet is shot
-    SoundBuffer bulletSoundbuffer;
-    bulletSoundbuffer.loadFromFile("audios/BulletShoot.wav");
-    Sound bulletSound(bulletSoundbuffer);
-    //This is for playing a sound when the asteroid is destroyed
-    SoundBuffer asteroidSoundbuffer;
-    asteroidSoundbuffer.loadFromFile("audios/AsteroidExplosion.wav");
-    Sound asteroidSound(asteroidSoundbuffer);
+ 
 
     Bullets bullet(window, "bullets.png");
     Picture hearts[5] = { Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png") };
@@ -88,6 +82,26 @@ void game(RenderWindow& window, string username) {
         asteroidTimer = 4;
 
     }
+    SoundBuffer bulletSoundbuffer;
+    SoundBuffer asteroidSoundbuffer;
+    Sound asteroidSound;
+    Sound bulletSound;
+    if(settings[0]=="0")
+    {
+    bulletSoundbuffer.loadFromFile("audios/NoSound.wav");
+    asteroidSoundbuffer.loadFromFile("audios/NoSound.wav");
+    bulletSound.setBuffer(bulletSoundbuffer);
+    asteroidSound.setBuffer(asteroidSoundbuffer);
+    }
+    else
+    {
+    bulletSoundbuffer.loadFromFile("audios/BulletShoot.wav");
+    //This is for playing a sound when the asteroid is destroyed
+    asteroidSoundbuffer.loadFromFile("audios/AsteroidExplosion.wav");
+    bulletSound.setBuffer(bulletSoundbuffer);
+    asteroidSound.setBuffer(asteroidSoundbuffer);
+    }
+    
 
     Font font;
     if (!font.loadFromFile("AGENCYR.ttf")) {
@@ -286,8 +300,7 @@ void game(RenderWindow& window, string username) {
         }
         // Ending the game
         if (heart <= 0) {
-            cout << "GAME OVER" << endl;
-
+            bool quit=GameOver(window, score);
             // Update high scores
             highScores.push_back(make_pair(score, username));
             sort(highScores.rbegin(), highScores.rend());
@@ -300,10 +313,23 @@ void game(RenderWindow& window, string username) {
                 HighScoreOutput << entry.second << " " << entry.first << endl;
             }
             HighScoreOutput.close();
-
-            window.close();
+            if(quit){
+                return;
+            }
+            else{
+                score = 0;
+                levels = 1;
+                heart = 5;
+                multiplier = 1;
+                endMultiplier.restart();
+                spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
+                for (int i = 0; i < 5; i++) {
+                    hearts[i].setPosition(Vector2f(10 + (i * 50), 20));
+                }
         }
-        scoretxt.setString("Score: " + to_string(score));
+       
+    }
+     scoretxt.setString("Score: " + to_string(score));
         highscoretxt.setString("High Score: " + to_string(highScore));
         levelsTxt.setString("Level: " + to_string(levels));
         Multiplier.setString("Multiplier: " + to_string(multiplier));
@@ -312,6 +338,6 @@ void game(RenderWindow& window, string username) {
         window.draw(levelsTxt);
         window.draw(Multiplier);
         window.display();
-    }
+}
 }
 

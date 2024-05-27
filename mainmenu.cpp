@@ -104,7 +104,6 @@ void firstScreen(RenderWindow& window) {
     Sprite firstsp(firstbg);
 
     Button playButton("PLAY", Vector2f(300, 80), 24, Color(141, 26, 22), Color::Black);
-    Button optionsButton("OPTIONS", Vector2f(300, 80), 24, Color(141, 26, 22), Color::Black);
     Button quitButton("QUIT", Vector2f(300, 80), 24, Color(141, 26, 22), Color::Black);
     Button Highscore("HIGH SCORE", Vector2f(300, 80), 24, Color(141, 26, 22), Color::Black);
     Button Settings("SETTINGS", Vector2f(300, 80), 24, Color(141, 26, 22), Color::Black);
@@ -114,7 +113,6 @@ void firstScreen(RenderWindow& window) {
         return;
     }
     playButton.setFont(font);
-    optionsButton.setFont(font);
     quitButton.setFont(font);
     Highscore.setFont(font);
     Settings.setFont(font);
@@ -122,10 +120,9 @@ void firstScreen(RenderWindow& window) {
 
     Vector2u windowSize = window.getSize();
     playButton.setPosition(Vector2f(windowSize.x / 2 - playButton.getSize().x / 2, 200));
-    optionsButton.setPosition(Vector2f(windowSize.x / 2 - optionsButton.getSize().x / 2, 300));
-    quitButton.setPosition(Vector2f(windowSize.x / 2 - quitButton.getSize().x / 2, 600));
-    Highscore.setPosition(Vector2f(windowSize.x / 2 - Highscore.getSize().x / 2, 400));
-    Settings.setPosition(Vector2f(windowSize.x / 2 - Settings.getSize().x / 2, 500));
+    quitButton.setPosition(Vector2f(windowSize.x / 2 - quitButton.getSize().x / 2, 500));
+    Highscore.setPosition(Vector2f(windowSize.x / 2 - Highscore.getSize().x / 2, 300));
+    Settings.setPosition(Vector2f(windowSize.x / 2 - Settings.getSize().x / 2, 400));
     while (window.isOpen()) {
         Event event;
         while (window.pollEvent(event)) {
@@ -135,9 +132,6 @@ void firstScreen(RenderWindow& window) {
             else if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
                 if (playButton.buttonClicked(window)) {
                     mainmenu(window);
-                }
-                else if (optionsButton.buttonClicked(window)) {
-                    cout << "Opening options..." << endl;
                 }
                 else if (quitButton.buttonClicked(window)) {
                     window.close();
@@ -154,7 +148,6 @@ void firstScreen(RenderWindow& window) {
         window.clear();
         window.draw(firstsp);
         playButton.drawTo(window);
-        optionsButton.drawTo(window);
         quitButton.drawTo(window);
         Highscore.drawTo(window);
         Settings.drawTo(window);
@@ -210,6 +203,7 @@ void mainmenu(RenderWindow& window) {
                 }
                 if (nextButton.buttonClicked(window) && !input.empty()) {
                     game(window, input);
+                    return;
                 }
             }
             else if (event.type == Event::TextEntered) {
