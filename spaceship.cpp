@@ -177,7 +177,7 @@ void game(RenderWindow& window, string username) {
                 window.close();
             }
         }
-        if (event.key.code == Keyboard::Space && (clock.getElapsedTime().asSeconds() > 1 || a)) {
+        if (event.key.code == Keyboard::Space && (clock.getElapsedTime().asSeconds() > 0.5 || a)) {
             bulletSound.play();
             bullet.SetPosition((spaceship.getPosition().x) + 50, spaceship.getPosition().y - 10);
             bullets.push_back(bullet);
