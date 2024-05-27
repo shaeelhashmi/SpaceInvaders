@@ -1,9 +1,3 @@
-#include <iostream>
-#include <SFML/Graphics.hpp>
-#include <string>
-#include <fstream>
-#include "GameClasses.cpp"
-
 using namespace std;
 using namespace sf;
 
@@ -154,8 +148,4 @@ void settingsScreen(RenderWindow& window) {
         window.display();
     }
 }
-int main() {
-    RenderWindow window(VideoMode::getDesktopMode(), "Space Invaders", Style::Close | Style::Fullscreen);
-    settingsScreen(window);
-    return 0;
-}
+

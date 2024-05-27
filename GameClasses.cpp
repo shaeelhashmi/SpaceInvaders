@@ -185,8 +185,18 @@ class Asteroid {
     void SetTexture(string filePath) {
         asteroid.SetTexture(filePath);
     }
-    void move(RenderWindow& window) {
-        double speed = 0.00000097 * window.getSize().y * window.getSize().x * 2;
+    void move(RenderWindow& window, int level, string difficulty) {
+
+        double speed = window.getSize().y * 0.005 + (level * 0.008);
+        if (difficulty == "hard") {
+            speed = window.getSize().y * 0.005 + (level * 0.008);
+        }
+        else if (difficulty == "medium") {
+            speed = window.getSize().y * 0.003 + (level * 0.007);
+        }
+        else {
+            speed = window.getSize().y * 0.001 + (level * 0.006);
+        }
         asteroid.move(0, speed);
     }
     void drawTo(RenderWindow& window) {
@@ -318,13 +328,13 @@ class AirStrikeMinion {
 class SpecialAsteroid {
     Picture specialast;
 
-public:
+    public:
     SpecialAsteroid(RenderWindow& window, string specialtex) : specialast(specialtex) {
         specialast.setScale(Vector2f(50, 50));
-        specialast.setPosition(Vector2f(rand() % window.getSize().x-100, 0));
+        specialast.setPosition(Vector2f(rand() % window.getSize().x - 100, 0));
     }
     void setRandomPosition(RenderWindow& window) {
-        specialast.setPosition(Vector2f(rand() % window.getSize().x-100, 0));
+        specialast.setPosition(Vector2f(rand() % window.getSize().x - 100, 0));
     }
     void move(RenderWindow& window) {
         float speed = 3.5f;

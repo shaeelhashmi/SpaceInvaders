@@ -309,7 +309,7 @@ void level2Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     }
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
 }
-void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement, Asteroid& as, vector<Asteroid>& asteroids, vector<Asteroid>& explodedAsteroids, vector<Clock>& explodedAsteroidsTime, Clock& asteroidClock, int& multiplier, Clock& endMultiplier, Text& Multiplier) {
+void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement, Asteroid& as, vector<Asteroid>& asteroids, vector<Asteroid>& explodedAsteroids, vector<Clock>& explodedAsteroidsTime, Clock& asteroidClock, int& multiplier, Clock& endMultiplier, Text& Multiplier, string& difficulty) {
     window.clear();
     int temp = multiplier;
     SoundBuffer bulletBuffer;
@@ -387,7 +387,7 @@ void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
         }
         for (int i = 0; i < asteroids.size(); i++) {
             asteroids[i].SetTexture("Asteroid.png");
-            asteroids[i].move(window);
+            asteroids[i].move(window, levels,difficulty);
             asteroids[i].drawTo(window);
             if (spaceship.getGlobalBounds().intersects(asteroids[i].getGlobalBounds())) {
                 heart--;
@@ -523,7 +523,7 @@ void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     }
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
 }
-void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement, Asteroid& as, vector<Asteroid>& asteroids, vector<Asteroid>& explodedAsteroids, vector<Clock>& explodedAsteroidsTime, Clock& asteroidClock, int& multiplier, Clock& endMultiplier, Text& Multiplier) {
+void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement, Asteroid& as, vector<Asteroid>& asteroids, vector<Asteroid>& explodedAsteroids, vector<Clock>& explodedAsteroidsTime, Clock& asteroidClock, int& multiplier, Clock& endMultiplier, Text& Multiplier, string& difficulty) {
     window.clear();
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
     SoundBuffer bulletBuffer;
@@ -609,7 +609,7 @@ void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
         }
         for (int i = 0; i < asteroids.size(); i++) {
             asteroids[i].SetTexture("Asteroid.png");
-            asteroids[i].move(window);
+            asteroids[i].move(window, levels,difficulty);
             asteroids[i].drawTo(window);
             if (spaceship.getGlobalBounds().intersects(asteroids[i].getGlobalBounds())) {
                 heart--;
