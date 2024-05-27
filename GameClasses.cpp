@@ -369,7 +369,7 @@ bool GameOver(RenderWindow& window,int score) {
     PlayAgain.setFont(font);
     Score.setPosition((window.getSize().x / 2.0) - 60, (window.getSize().y / 2.0));
     GoTomain.setPosition(Vector2f((window.getSize().x / 2.0) - PlayAgain.getSize().x - 5, window.getSize().y / 2 + 100));
-    PlayAgain.setPosition(Vector2f((window.getSize().x / 2.0) + 5, window.getSize().y / 2 + 00));
+    PlayAgain.setPosition(Vector2f((window.getSize().x / 2.0) + 5, window.getSize().y / 2 + 100));
     while (window.isOpen()) {
         window.clear();
         GoTomain.drawTo(window);

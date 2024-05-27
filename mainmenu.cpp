@@ -6,7 +6,7 @@ void firstScreen(RenderWindow& window);
 void mainmenu(RenderWindow& window);
 void displayHighScore(RenderWindow& window) {
     Button Exit("Back to main menu", Vector2f(500, 80), 24, Color(141, 26, 22), Color::Black);
-
+    Button ClearScores("Clear HighScores", Vector2f(500, 80), 24, Color(141, 26, 22), Color::Black);
     vector<Text> highScoresText;
     Font font;
     if (!font.loadFromFile("LEMONMILK-Medium.otf")) {
@@ -30,7 +30,7 @@ void displayHighScore(RenderWindow& window) {
         HighScoreInput.close();
     }
     else {
-        Exit.leftalign(Vector2f((window.getSize().x / 2) - (Exit.getSize().x / 2) + 20, window.getSize().y / 2 + 40), Exit.getSize().x / 4);
+        Exit.leftalign(Vector2f((window.getSize().x / 2) - (Exit.getSize().x / 2) , window.getSize().y / 2 + 40), Exit.getSize().x / 4);
         Exit.setFont(font);
         Text a("No high scores found!", font, 24);
         a.setPosition((window.getSize().x / 2) - 100, window.getSize().y / 2);
@@ -57,7 +57,6 @@ void displayHighScore(RenderWindow& window) {
 
     }
     sort(highScores.rbegin(), highScores.rend());
-
     for (int i = 0; i < highScores.size() && i < 5; ++i) {
         highScoresText.push_back(Text(to_string(i + 1) + ". " + highScores[i].second + ": " + to_string(highScores[i].first), font, 24));
     }
@@ -67,8 +66,10 @@ void displayHighScore(RenderWindow& window) {
         highScoresText[i].setPosition((window.getSize().x / 2) - 50, pos);
         pos += 50;
     }
-    Exit.leftalign(Vector2f((window.getSize().x / 2) - (Exit.getSize().x / 2) + 20, pos), Exit.getSize().x / 4);
+    Exit.leftalign(Vector2f(10 , pos), Exit.getSize().x / 4);
+    ClearScores.leftalign(Vector2f((window.getSize().x )-(ClearScores.getSize().x)-10, pos), Exit.getSize().x / 4);
     Exit.setFont(font);
+    ClearScores.setFont(font);
     while (window.isOpen()) {
         window.clear();
         Event event;
@@ -81,16 +82,23 @@ void displayHighScore(RenderWindow& window) {
                     window.clear();
                     return;
                 }
-
+                if (ClearScores.buttonClicked(window)) {
+                    ofstream HighScoreOutput("highscore.txt",ios::trunc);
+                    HighScoreOutput.close();
+                    window.clear();
+                    return;
             }
+            
         }
 
         for (int i = 0;i < highScoresText.size();i++) {
             window.draw(highScoresText[i]);
         }
         Exit.drawTo(window);
+        ClearScores.drawTo(window);
         window.display();
     }
+}
 }
 void firstScreen(RenderWindow& window) {
     window.setFramerateLimit(60);
