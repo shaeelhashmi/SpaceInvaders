@@ -23,6 +23,7 @@ void game(RenderWindow& window, string username) {
     string settings[3];
     Clock clock;
     Asteroid as(window, "Asteroid.png", spaceship.getSize().x);
+    SpecialAsteroid specialAst(window, "SpecialAsteroid.png");
     // The clock for the multiplier to end
     Clock endMultiplier;
     Clock asteroidClock;
@@ -34,6 +35,8 @@ void game(RenderWindow& window, string username) {
     // This vector will store the time for each exploded asteroid
     vector<Clock> explodedAsteroidsTime;
     // This will be increased for every asteroid destroyed
+    vector<SpecialAsteroid> SpecialAste;
+
     bool changelevel = false;
     int heart = 5;
     int multiplier = 1;
@@ -218,6 +221,10 @@ void game(RenderWindow& window, string username) {
         if (shootedAsteroids == 5) {
             levels++;
             shootedAsteroids = 0;
+
+            if (levels % 3 == 0){
+                SpecialAste.push_back(specialAst);
+            }
         }
         if (asteroidClock.getElapsedTime().asSeconds() > 3.0f) {
             if (!changelevel) {
@@ -238,6 +245,29 @@ void game(RenderWindow& window, string username) {
                 explodedAsteroids[i].drawTo(window);
             }
         }
+
+        for (int i = 0; i < SpecialAste.size(); i++) {
+        SpecialAste[i].move(window);
+        SpecialAste[i].drawTo(window);
+    
+    if (spaceship.getGlobalBounds().intersects(SpecialAste[i].getGlobalBounds())) {
+        heart = 0;
+        SpecialAste.erase(SpecialAste.begin() + i);
+        continue;
+    }
+    
+    for (int j = 0; j < bullets.size(); j++) {
+        if (bullets[j].getGlobalBounds().intersects(SpecialAste[i].getGlobalBounds())) {
+            bullets.erase(bullets.begin() + j);
+            break;
+        }
+    }
+    
+    if (SpecialAste[i].getPosition().y > window.getSize().y) {
+        SpecialAste.erase(SpecialAste.begin() + i);
+    }
+}
+
         spaceship.drawTo(window);
         for (int i = 0; i < heart; i++) {
             hearts[i].drawTo(window);
@@ -275,6 +305,6 @@ void game(RenderWindow& window, string username) {
 
 int main() {
     RenderWindow window(VideoMode::getDesktopMode(), "Space Invaders", Style::Close | Style::Fullscreen);
-    game(window, "Mujtaba");
+    game(window, "Player");
     return 0;
 }
