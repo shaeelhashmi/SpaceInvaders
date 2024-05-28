@@ -67,12 +67,12 @@ void settingsScreen(RenderWindow& window) {
     }
     for (int i = 0, x = 700; i < 3; i++) {
         FPS[i].setFont(font);
-        FPS[i].setPosition(Vector2f(x, 300));
+        FPS[i].setPosition(Vector2f(x, 200));
         x += 80;
     }
     for (int i = 0, x = 700; i < 3; i++) {
         Difficulty[i].setFont(font);
-        Difficulty[i].setPosition(Vector2f(x, 200));
+        Difficulty[i].setPosition(Vector2f(x, 300));
         x += 80;
     }
     while (window.isOpen()) {
