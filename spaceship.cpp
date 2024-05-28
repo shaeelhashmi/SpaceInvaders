@@ -274,7 +274,7 @@ window.setFramerateLimit(stoi(settings[2]));
                 }
             }
         }
-        if (shootedAsteroids >= 5) {
+        if (shootedAsteroids >= 5+(0.5*levels)) {
             levels++;
             shootedAsteroids = 0;
             if (levels % 3 == 0) {
@@ -355,6 +355,8 @@ window.setFramerateLimit(stoi(settings[2]));
                 for (int i = 0; i < 5; i++) {
                     hearts[i].setPosition(Vector2f(10 + (i * 50), 20));
                 }
+                asteroids.erase(asteroids.begin(), asteroids.end());
+                bullets.erase(bullets.begin(), bullets.end());
         }
        
     }

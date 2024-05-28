@@ -17,6 +17,7 @@ void setVal(double &bulletSpeed,double &teleportationTimer,string Setting[],Rend
 }
 void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement,string Setting[],Sound &HealthLoss,Sound &GameSound) {
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
+    window.clear();
     double teleportationTimer = 10;
     double bulletSpeed = 0.007;
     setVal(bulletSpeed,teleportationTimer,Setting,window);
@@ -36,7 +37,7 @@ void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
 
      BossbulletsBuffer.loadFromFile("audios/BossBullet.wav");
     }
-    Sound bulletSound; 
+    Sound bulletSound(bulletBuffer); 
     Sound BossBulletsSound(BossbulletsBuffer);
 
     bool a = false;
@@ -199,7 +200,7 @@ void level2Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
 
      BossbulletsBuffer.loadFromFile("audios/BossBullet.wav");
     }
-    Sound bulletSound; 
+    Sound bulletSound(bulletBuffer); 
     Sound BossBulletsSound(BossbulletsBuffer);
 
     bulletSound.setBuffer(bulletBuffer);
@@ -371,7 +372,7 @@ void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     asteroidSoundbuffer.loadFromFile("audios/AsteroidExplosion.wav");
      BossbulletsBuffer.loadFromFile("audios/BossBullet.wav");
     }
-    Sound bulletSound; 
+    Sound bulletSound(bulletBuffer); 
     Sound BossBulletsSound(BossbulletsBuffer);
     Sound asteroidSound(asteroidSoundbuffer);
 
@@ -602,7 +603,7 @@ void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
      BossbulletsBuffer.loadFromFile("audios/BossBullet.wav");
      MinionBuffer.loadFromFile("audios/MinionBomb.wav");
     }
-    Sound bulletSound; 
+    Sound bulletSound(bulletBuffer); 
     Sound BossBulletsSound(BossbulletsBuffer);
     Sound asteroidSound(asteroidSoundbuffer);
     Sound minionStrike(MinionBuffer);
