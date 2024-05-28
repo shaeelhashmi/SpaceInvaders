@@ -15,7 +15,7 @@ void setVal(double &bulletSpeed,double &teleportationTimer,string Setting[],Rend
         cout<<bulletSpeed;
     }
 }
-void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement,string Setting[]) {
+void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement,string Setting[],Sound &HealthLoss) {
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
     double teleportationTimer = 10;
     double bulletSpeed = 0.007;
@@ -117,6 +117,7 @@ void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
         //This condition will check if the boss bullets has collided with the spaceship
         for (int i = 0;i < bossBullets.size();i++) {
             if (bossBullets[i].getGlobalBounds().intersects(spaceship.getGlobalBounds())) {
+                HealthLoss.play();
                 heart--;
                 bossBullets.erase(bossBullets.begin() + i);
             }
@@ -171,8 +172,7 @@ void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     }
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
 }
-void level2Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock
-    , double movement,string Setting[]) {
+void level2Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement,string Setting[],Sound &HealthLoss) {
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
    double teleportationTimer = 8;
     double bulletSpeed = 0.009;
@@ -275,6 +275,7 @@ void level2Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
         //This condition will check if the boss bullets has collided with the spaceship
         for (int i = 0;i < bossBullets.size();i++) {
             if (bossBullets[i].getGlobalBounds().intersects(spaceship.getGlobalBounds())) {
+                HealthLoss.play();
                 heart--;
                 bossBullets.erase(bossBullets.begin() + i);
 
@@ -332,7 +333,7 @@ void level2Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     }
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
 }
-void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement, Asteroid& as, vector<Asteroid>& asteroids, vector<Asteroid>& explodedAsteroids, vector<Clock>& explodedAsteroidsTime, Clock& asteroidClock, int& multiplier, Clock& endMultiplier, Text& Multiplier, string settings[]) {
+void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement, Asteroid& as, vector<Asteroid>& asteroids, vector<Asteroid>& explodedAsteroids, vector<Clock>& explodedAsteroidsTime, Clock& asteroidClock, int& multiplier, Clock& endMultiplier, Text& Multiplier, string settings[],Sound &HealthLoss) {
     window.clear();
    double teleportationTimer = 8;
     double bulletSpeed = 0.01;
@@ -551,7 +552,7 @@ void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     }
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
 }
-void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement, Asteroid& as, vector<Asteroid>& asteroids, vector<Asteroid>& explodedAsteroids, vector<Clock>& explodedAsteroidsTime, Clock& asteroidClock, int& multiplier, Clock& endMultiplier, Text& Multiplier, string settings[]) {
+void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement, Asteroid& as, vector<Asteroid>& asteroids, vector<Asteroid>& explodedAsteroids, vector<Clock>& explodedAsteroidsTime, Clock& asteroidClock, int& multiplier, Clock& endMultiplier, Text& Multiplier, string settings[],Sound &HealthLoss) {
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
     double teleportationTimer = 5;
     double bulletSpeed = 0.01;
@@ -586,7 +587,7 @@ void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     bool startStrikebool = false;
     AirStrikeMinion minion(window, "MinionShip.png");
     vector<Bullets> minionBullets;
-    Bullets minionBullet(window, "AirBomb.png");
+    Bullets minionBullet(window, "Minion.png");
     Clock startStrike;
     Clock minionShoot;
     bool a = false;
@@ -658,6 +659,7 @@ void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
             asteroids[i].move(window, levels,settings[1]);
             asteroids[i].drawTo(window);
             if (spaceship.getGlobalBounds().intersects(asteroids[i].getGlobalBounds())) {
+                HealthLoss.play();
                 heart--;
                 asteroids.erase(asteroids.begin() + i);
             }
@@ -724,6 +726,7 @@ void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
         }
         for (int i = 0;i < minionBullets.size();i++) {
             if (minionBullets[i].getGlobalBounds().intersects(spaceship.getGlobalBounds())) {
+                HealthLoss.play();
                 heart--;
                 minionBullets.erase(minionBullets.begin() + i);
             }
