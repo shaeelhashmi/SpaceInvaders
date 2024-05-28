@@ -21,19 +21,24 @@ void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     double bulletSpeed = 0.007;
     setVal(bulletSpeed,teleportationTimer,Setting,window);
     //Creating bullet sound
-    SoundBuffer bulletBuffer;
-    if(Setting[0]=="0")
+   SoundBuffer bulletBuffer;
+    SoundBuffer BossbulletsBuffer;
+      if(Setting[0]=="0")
     {
         bulletBuffer.loadFromFile("audios/NoSound.wav");
+        BossbulletsBuffer.loadFromFile("audios/NoSound.wav");
     }
     else
     {
     if (!bulletBuffer.loadFromFile("audios/BulletShoot.wav")) {
         cout << "Error loading bullet sound" << endl;
     }
+
+     BossbulletsBuffer.loadFromFile("audios/BossBullet.wav");
     }
-    Sound bulletSound;
-    bulletSound.setBuffer(bulletBuffer);
+    Sound bulletSound; 
+    Sound BossBulletsSound(BossbulletsBuffer);
+
     bool a = false;
     Boss b1(window, "Boss1.png");
     Clock bossShoot;
@@ -123,6 +128,7 @@ void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
             }
         }
         if (bossShoot.getElapsedTime().asSeconds() > 3) {
+            BossBulletsSound.play();
             bossBullet.SetPosition(b1.getPosition().x + 50, b1.getPosition().y + 50);
             bossBullets.push_back(bossBullet);
             bossShoot.restart();
@@ -172,17 +178,23 @@ void level2Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     double bulletSpeed = 0.009;
     setVal(bulletSpeed,teleportationTimer,Setting,window);
     SoundBuffer bulletBuffer;
-     if(Setting[0]=="0")
+    SoundBuffer BossbulletsBuffer;
+      if(Setting[0]=="0")
     {
         bulletBuffer.loadFromFile("audios/NoSound.wav");
+        BossbulletsBuffer.loadFromFile("audios/NoSound.wav");
     }
     else
     {
     if (!bulletBuffer.loadFromFile("audios/BulletShoot.wav")) {
         cout << "Error loading bullet sound" << endl;
     }
+
+     BossbulletsBuffer.loadFromFile("audios/BossBullet.wav");
     }
-    Sound bulletSound;
+    Sound bulletSound; 
+    Sound BossBulletsSound(BossbulletsBuffer);
+
     bulletSound.setBuffer(bulletBuffer);
     bool a = false;
     Boss b1(window, "Boss2.png");
@@ -275,6 +287,7 @@ void level2Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
             }
         }
         if (bossShoot.getElapsedTime().asSeconds() > 2) {
+            BossBulletsSound.play();
             bossBullet.SetPosition(b1.getPosition().x + 50, b1.getPosition().y + 50);
             bossBullets.push_back(bossBullet);
             bossShoot.restart();
@@ -327,10 +340,12 @@ void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     int temp = multiplier;
     SoundBuffer bulletBuffer;
     SoundBuffer asteroidSoundbuffer;
+    SoundBuffer BossbulletsBuffer;
    if(settings[0]=="0")
     {
         bulletBuffer.loadFromFile("audios/NoSound.wav");
         asteroidSoundbuffer.loadFromFile("audios/NoSound.wav");
+        BossbulletsBuffer.loadFromFile("audios/NoSound.wav");
     }
     else
     {
@@ -338,8 +353,10 @@ void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
         cout << "Error loading bullet sound" << endl;
     }
     asteroidSoundbuffer.loadFromFile("audios/AsteroidExplosion.wav");
+     BossbulletsBuffer.loadFromFile("audios/BossBullet.wav");
     }
     Sound bulletSound; 
+    Sound BossBulletsSound(BossbulletsBuffer);
     Sound asteroidSound(asteroidSoundbuffer);
 
     bulletSound.setBuffer(bulletBuffer);
@@ -488,6 +505,7 @@ void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
             }
         }
         if (bossShoot.getElapsedTime().asSeconds() > 2) {
+            BossBulletsSound.play();
             bossBullet.SetPosition(b1.getPosition().x + 50, b1.getPosition().y + 50);
             bossBullets.push_back(bossBullet);
             bossShoot.restart();
@@ -540,10 +558,14 @@ void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     setVal(bulletSpeed,teleportationTimer,settings,window);
       SoundBuffer bulletBuffer;
     SoundBuffer asteroidSoundbuffer;
+    SoundBuffer BossbulletsBuffer;
+    SoundBuffer MinionBuffer;
    if(settings[0]=="0")
     {
         bulletBuffer.loadFromFile("audios/NoSound.wav");
         asteroidSoundbuffer.loadFromFile("audios/NoSound.wav");
+        BossbulletsBuffer.loadFromFile("audios/NoSound.wav");
+        MinionBuffer.loadFromFile("audios/NoSound.wav");
     }
     else
     {
@@ -551,10 +573,15 @@ void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
         cout << "Error loading bullet sound" << endl;
     }
     asteroidSoundbuffer.loadFromFile("audios/AsteroidExplosion.wav");
-    }  
-    Sound bulletSound;
-    bulletSound.setBuffer(bulletBuffer);
+     BossbulletsBuffer.loadFromFile("audios/BossBullet.wav");
+     MinionBuffer.loadFromFile("audios/MinionBomb.wav");
+    }
+    Sound bulletSound; 
+    Sound BossBulletsSound(BossbulletsBuffer);
     Sound asteroidSound(asteroidSoundbuffer);
+    Sound minionStrike(MinionBuffer);
+
+    bulletSound.setBuffer(bulletBuffer);
     int temp = multiplier;
     bool startStrikebool = false;
     AirStrikeMinion minion(window, "MinionShip.png");
@@ -685,6 +712,7 @@ void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
             startStrike.restart();
         }
         if (minionShoot.getElapsedTime().asSeconds() > 1 && startStrikebool) {
+            minionStrike.play();
             minionBullet.SetPosition(minion.getPosition().x + 50, minion.getPosition().y);
             minionBullets.push_back(minionBullet);
             minionShoot.restart();
@@ -702,7 +730,6 @@ void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
             else {
                 minionBullets[i].move(0, window.getSize().y * 0.01);
                 minionBullets[i].drawTo(window);
-
             }
         }
         if (startStrikebool) {
@@ -737,6 +764,7 @@ void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
             }
         }
         if (bossShoot.getElapsedTime().asSeconds() > 1) {
+            BossBulletsSound.play();
             bossBullet.SetPosition(b1.getPosition().x + 50, b1.getPosition().y + 50);
             bossBullets.push_back(bossBullet);
             bossShoot.restart();

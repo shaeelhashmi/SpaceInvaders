@@ -136,9 +136,9 @@ void game(RenderWindow& window, string username) {
         hearts[i].setPosition(Vector2f(pos, 20));
         pos += 50;
     }
-
-    while (window.isOpen()) {
-        window.setFramerateLimit(stoi(settings[2]));
+window.setFramerateLimit(stoi(settings[2]));
+    while (window.isOpen()) {      
+        
         if (score > highScore) {
             highScore = score;
         }

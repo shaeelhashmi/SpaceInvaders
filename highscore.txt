@@ -1,2 +1,5 @@
 da 2475
 faf 80
+da 10
+da 5
+dad 0
