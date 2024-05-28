@@ -15,7 +15,7 @@ void setVal(double &bulletSpeed,double &teleportationTimer,string Setting[],Rend
         cout<<bulletSpeed;
     }
 }
-void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement,string Setting[],Sound &HealthLoss) {
+void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement,string Setting[],Sound &HealthLoss,Sound &GameSound) {
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
     double teleportationTimer = 10;
     double bulletSpeed = 0.007;
@@ -57,6 +57,8 @@ void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
         window.draw(Welcome);
         window.display();
     }
+    GameSound.play();
+    Clock gameSound;
     while (window.isOpen()) {
         window.clear();
         Event event;
@@ -154,6 +156,11 @@ void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
         if (heart <= 0) {
             return;
         }
+       if(gameSound.getElapsedTime().asSeconds()>GameSound.getBuffer()->getDuration().asSeconds())
+        {
+            GameSound.play();
+            gameSound.restart();
+        }
         scoretxt.setString("Score: " + to_string(score));
         highscoretxt.setString("High Score: " + to_string(highScore));
         levelsTxt.setString("Level: " + to_string(levels));
@@ -172,7 +179,7 @@ void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     }
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
 }
-void level2Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement,string Setting[],Sound &HealthLoss) {
+void level2Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement,string Setting[],Sound &HealthLoss,Sound &GameSound) {
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
    double teleportationTimer = 8;
     double bulletSpeed = 0.009;
@@ -214,6 +221,8 @@ void level2Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
         window.display();
     }
     window.clear();
+    Clock gameSound;
+    GameSound.play();
     while (window.isOpen()) {
         Event event;
         while (window.pollEvent(event)) {
@@ -221,6 +230,7 @@ void level2Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
                 window.close();
             }
         }
+        b1.Follow(spaceship, movement);
         if (event.key.code == Keyboard::Space && (clock.getElapsedTime().asSeconds() > 0.5)) {
             bulletSound.play();
             bullet.SetPosition((spaceship.getPosition().x) + 50, spaceship.getPosition().y - 10);
@@ -313,6 +323,11 @@ void level2Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
            return;
             window.close();
         }
+          if(gameSound.getElapsedTime().asSeconds()>GameSound.getBuffer()->getDuration().asSeconds())
+        {
+            GameSound.play();
+            gameSound.restart();
+        }
         scoretxt.setString("Score: " + to_string(score));
         highscoretxt.setString("High Score: " + to_string(highScore));
         levelsTxt.setString("Level: " + to_string(levels));
@@ -333,7 +348,7 @@ void level2Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     }
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
 }
-void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement, Asteroid& as, vector<Asteroid>& asteroids, vector<Asteroid>& explodedAsteroids, vector<Clock>& explodedAsteroidsTime, Clock& asteroidClock, int& multiplier, Clock& endMultiplier, Text& Multiplier, string settings[],Sound &HealthLoss) {
+void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement, Asteroid& as, vector<Asteroid>& asteroids, vector<Asteroid>& explodedAsteroids, vector<Clock>& explodedAsteroidsTime, Clock& asteroidClock, int& multiplier, Clock& endMultiplier, Text& Multiplier, string settings[],Sound &HealthLoss,Sound &GameSound) {
     window.clear();
    double teleportationTimer = 8;
     double bulletSpeed = 0.01;
@@ -381,6 +396,9 @@ void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     }
     window.clear();
     multiplier = temp;
+    endMultiplier.restart();
+    Clock gameSound;
+    GameSound.play();
     while (window.isOpen()) {
         Event event;
         while (window.pollEvent(event)) {
@@ -388,6 +406,7 @@ void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
                 window.close();
             }
         }
+        b1.Follow(spaceship, movement);
         if (event.key.code == Keyboard::Space && (clock.getElapsedTime().asSeconds() > 0.5)) {
             bulletSound.play();
             bullet.SetPosition((spaceship.getPosition().x) + 50, spaceship.getPosition().y - 10);
@@ -495,6 +514,7 @@ void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
         //This condition will check if the boss bullets has collided with the spaceship
         for (int i = 0;i < bossBullets.size();i++) {
             if (bossBullets[i].getGlobalBounds().intersects(spaceship.getGlobalBounds())) {
+                HealthLoss.play();
                 heart -= 2;
                 bossBullets.erase(bossBullets.begin() + i);
             }
@@ -530,6 +550,11 @@ void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
         if (heart <= 0) {
           return;
         }
+        if(gameSound.getElapsedTime().asSeconds()>GameSound.getBuffer()->getDuration().asSeconds())
+        {
+            GameSound.play();
+            gameSound.restart();
+        }
         scoretxt.setString("Score: " + to_string(score));
         highscoretxt.setString("High Score: " + to_string(highScore));
         levelsTxt.setString("Level: " + to_string(levels));
@@ -552,7 +577,7 @@ void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     }
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
 }
-void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement, Asteroid& as, vector<Asteroid>& asteroids, vector<Asteroid>& explodedAsteroids, vector<Clock>& explodedAsteroidsTime, Clock& asteroidClock, int& multiplier, Clock& endMultiplier, Text& Multiplier, string settings[],Sound &HealthLoss) {
+void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement, Asteroid& as, vector<Asteroid>& asteroids, vector<Asteroid>& explodedAsteroids, vector<Clock>& explodedAsteroidsTime, Clock& asteroidClock, int& multiplier, Clock& endMultiplier, Text& Multiplier, string settings[],Sound &HealthLoss,Sound &GameSound) {
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
     double teleportationTimer = 5;
     double bulletSpeed = 0.01;
@@ -610,6 +635,9 @@ void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     }
     window.clear();
     multiplier = temp;
+    endMultiplier.restart();
+    Clock gameSound;
+    GameSound.play();
     while (window.isOpen()) {
         b1.Follow(spaceship, movement);
         Event event;
@@ -755,6 +783,7 @@ void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
         //This condition will check if the boss bullets has collided with the spaceship
         for (int i = 0;i < bossBullets.size();i++) {
             if (bossBullets[i].getGlobalBounds().intersects(spaceship.getGlobalBounds())) {
+                HealthLoss.play();
                 heart -= 2;
                 bossBullets.erase(bossBullets.begin() + i);
 
@@ -790,6 +819,11 @@ void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
         }
         if (heart <= 0) {
         return;
+        }
+        if(gameSound.getElapsedTime().asSeconds()>GameSound.getBuffer()->getDuration().asSeconds())
+        {
+            GameSound.play();
+            gameSound.restart();
         }
         scoretxt.setString("Score: " + to_string(score));
         highscoretxt.setString("High Score: " + to_string(highScore));

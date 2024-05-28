@@ -82,20 +82,28 @@ void game(RenderWindow& window, string username) {
         asteroidTimer = 3.5;
 
     }
+    SoundBuffer GameSoundBuffer;
+    SoundBuffer GameOverSoundBuffer;
     SoundBuffer bulletSoundbuffer;
     SoundBuffer asteroidSoundbuffer;
     SoundBuffer HealthLossSoundBuffer;
     Sound asteroidSound;
     Sound bulletSound;
     Sound HealthLossSound;
+    Sound gameSound;
+    Sound gameOverSound;
     if(settings[0]=="0")
     {
     bulletSoundbuffer.loadFromFile("audios/NoSound.wav");
     asteroidSoundbuffer.loadFromFile("audios/NoSound.wav");
     HealthLossSoundBuffer.loadFromFile("audios/NoSound.wav");
+    GameSoundBuffer.loadFromFile("audios/NoSound.wav");
+    GameOverSoundBuffer.loadFromFile("audios/NoSound.wav");
     bulletSound.setBuffer(bulletSoundbuffer);
     asteroidSound.setBuffer(asteroidSoundbuffer);
     HealthLossSound.setBuffer(HealthLossSoundBuffer);
+    gameSound.setBuffer(GameSoundBuffer);
+    gameOverSound.setBuffer(GameOverSoundBuffer);
     }
     else
     {
@@ -103,12 +111,14 @@ void game(RenderWindow& window, string username) {
     //This is for playing a sound when the asteroid is destroyed
     asteroidSoundbuffer.loadFromFile("audios/AsteroidExplosion.wav");
     HealthLossSoundBuffer.loadFromFile("audios/HealthLoss.wav");
+    GameSoundBuffer.loadFromFile("audios/GameSound.wav");
+    GameOverSoundBuffer.loadFromFile("audios/GameOver.wav");
     bulletSound.setBuffer(bulletSoundbuffer);
     asteroidSound.setBuffer(asteroidSoundbuffer);
     HealthLossSound.setBuffer(HealthLossSoundBuffer);
+    gameSound.setBuffer(GameSoundBuffer);
+    gameOverSound.setBuffer(GameOverSoundBuffer);
     }
-    
-
     Font font;
     if (!font.loadFromFile("AGENCYR.ttf")) {
         cout << "Error loading font" << endl;
@@ -142,9 +152,15 @@ void game(RenderWindow& window, string username) {
         hearts[i].setPosition(Vector2f(pos, 20));
         pos += 50;
     }
+    gameSound.play();
+    Clock GameSoundTimer;
 window.setFramerateLimit(stoi(settings[2]));
     while (window.isOpen()) {      
-        
+        if(GameSoundTimer.getElapsedTime().asSeconds()>gameSound.getBuffer()->getDuration().asSeconds())
+        {
+            gameSound.play();
+            GameSoundTimer.restart();
+        }
         if (score > highScore) {
             highScore = score;
         }
@@ -152,28 +168,28 @@ window.setFramerateLimit(stoi(settings[2]));
         if (levels == 5) {
             changelevel = true;
             if (asteroids.size() == 0) {
-                level1Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement,settings,HealthLossSound);
+                level1Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement,settings,HealthLossSound,gameSound);
                 changelevel = false;
             }
         }
         else if (levels == 10) {
             changelevel = true;
             if (asteroids.size() == 0) {
-                level2Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement,settings,HealthLossSound);
+                level2Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement,settings,HealthLossSound,gameSound);
                 changelevel = false;
             }
         }
         else if (levels == 15) {
             changelevel = true;
             if (asteroids.size() == 0) {
-                level3Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement, as, asteroids, explodedAsteroids, explodedAsteroidsTime, asteroidClock, multiplier, endMultiplier, Multiplier, settings,HealthLossSound);
+                level3Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement, as, asteroids, explodedAsteroids, explodedAsteroidsTime, asteroidClock, multiplier, endMultiplier, Multiplier, settings,HealthLossSound,gameSound);
                 changelevel = false;
             }
         }
         else if (levels == 20) {
             changelevel = true;
             if (asteroids.size() == 0) {
-                level4Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement, as, asteroids, explodedAsteroids, explodedAsteroidsTime, asteroidClock, multiplier, endMultiplier, Multiplier, settings,HealthLossSound);
+                level4Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement, as, asteroids, explodedAsteroids, explodedAsteroidsTime, asteroidClock, multiplier, endMultiplier, Multiplier, settings,HealthLossSound,gameSound);
                 changelevel = false;
             }
         }
@@ -261,7 +277,6 @@ window.setFramerateLimit(stoi(settings[2]));
         if (shootedAsteroids >= 5) {
             levels++;
             shootedAsteroids = 0;
-
             if (levels % 3 == 0) {
                 SpecialAste.push_back(specialAst);
             }
@@ -289,7 +304,6 @@ window.setFramerateLimit(stoi(settings[2]));
         for (int i = 0; i < SpecialAste.size(); i++) {
             SpecialAste[i].move(window);
             SpecialAste[i].drawTo(window);
-
             if (spaceship.getGlobalBounds().intersects(SpecialAste[i].getGlobalBounds())) {
                 heart = 0;
                 SpecialAste.erase(SpecialAste.begin() + i);
@@ -313,6 +327,8 @@ window.setFramerateLimit(stoi(settings[2]));
         }
         // Ending the game
         if (heart <= 0) {
+            gameSound.stop();
+            gameOverSound.play();
             bool quit=GameOver(window, score);
             // Update high scores
             highScores.push_back(make_pair(score, username));

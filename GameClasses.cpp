@@ -336,7 +336,6 @@ class AirStrikeMinion {
 
 class SpecialAsteroid {
     Picture specialast;
-
     public:
     SpecialAsteroid(RenderWindow& window, string specialtex) : specialast(specialtex) {
         specialast.setScale(Vector2f(50, 50));
