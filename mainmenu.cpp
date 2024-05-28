@@ -102,7 +102,24 @@ void displayHighScore(RenderWindow& window) {
 }
 void firstScreen(RenderWindow& window) {
     window.setFramerateLimit(60);
-
+    ifstream settingsFile("settings.txt");
+    string settings[3];
+     if (settingsFile.is_open()) {
+        string line;
+        int i = 0;
+        while (getline(settingsFile, line)) {
+            settings[i++] = line;
+        }
+    }
+    SoundBuffer menuBuffer;
+    if(settings[0] == "0"){
+       menuBuffer.loadFromFile("audios/NoSound.wav");
+    }
+    else{
+        menuBuffer.loadFromFile("audios/Mainmenu.wav");
+    }  
+    Sound menuMusic;    
+    menuMusic.setBuffer(menuBuffer);
     Texture firstbg;
     if (!firstbg.loadFromFile("bgspace.png")) {
         cout << "Failed to load background texture!" << endl;
@@ -124,14 +141,18 @@ void firstScreen(RenderWindow& window) {
     quitButton.setFont(font);
     Highscore.setFont(font);
     Settings.setFont(font);
-
-
     Vector2u windowSize = window.getSize();
     playButton.setPosition(Vector2f(windowSize.x / 2 - playButton.getSize().x / 2, 200));
     quitButton.setPosition(Vector2f(windowSize.x / 2 - quitButton.getSize().x / 2, 500));
     Highscore.setPosition(Vector2f(windowSize.x / 2 - Highscore.getSize().x / 2, 300));
     Settings.setPosition(Vector2f(windowSize.x / 2 - Settings.getSize().x / 2, 400));
+    menuMusic.play();
+    Clock clock;
     while (window.isOpen()) {
+        if(clock.getElapsedTime().asSeconds() > menuMusic.getBuffer()->getDuration().asSeconds()){
+            menuMusic.play();
+            clock.restart();
+        }
         Event event;
         while (window.pollEvent(event)) {
             if (event.type == Event::Closed) {
@@ -139,17 +160,37 @@ void firstScreen(RenderWindow& window) {
             }
             else if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
                 if (playButton.buttonClicked(window)) {
+                    menuMusic.stop();
                     mainmenu(window);
                 }
                 else if (quitButton.buttonClicked(window)) {
+                    menuMusic.stop();
                     window.close();
                 }
                 else if (Highscore.buttonClicked(window)) {
+                    menuMusic.stop();
                     displayHighScore(window);
                 }
                 else if (Settings.buttonClicked(window)) {
-                    settingsScreen(window);
+                    menuMusic.stop();
+                settingsScreen(window);
+                ifstream settingsFile("settings.txt");
+                if (settingsFile.is_open()) {
+                string line;
+                int i = 0;
+                while (getline(settingsFile, line)) {
+                settings[i++] = line;
                 }
+            }
+            if(settings[0] == "0"){
+            menuBuffer.loadFromFile("audios/NoSound.wav");
+            }
+            else{
+                menuBuffer.loadFromFile("audios/Mainmenu.wav");
+            }    
+            menuMusic.setBuffer(menuBuffer);
+            menuMusic.play();
+            }
             }
         }
 
@@ -166,6 +207,7 @@ void firstScreen(RenderWindow& window) {
 void mainmenu(RenderWindow& window) {
     window.setFramerateLimit(60);
     string input;
+    string settings[3];
 
     Button backButton("back", Vector2f(205, 50), 24, Color(141, 26, 22), Color::Black);
     Button nextButton("next", Vector2f(205, 50), 24, Color(141, 26, 22), Color::Black);
@@ -198,7 +240,7 @@ void mainmenu(RenderWindow& window) {
 
     textboxBackground.setPosition((window.getSize().x / 2.0) - (textboxBackground.getSize().x / 2.0), window.getSize().y / 3.0);
     inputText.setPosition(textboxBackground.getPosition().x + 10, textboxBackground.getPosition().y + 10);
-
+    
     while (window.isOpen()) {
         Event event;
         while (window.pollEvent(event)) {
