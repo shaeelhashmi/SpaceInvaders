@@ -43,7 +43,7 @@ void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     Boss b1(window, "Boss1.png");
     Clock bossShoot;
     vector<Bullets> bossBullets;
-    Bullets bossBullet(window, "Bombs.png");
+    Bullets bossBullet(window, "Boss1Bullet.png");
     Font font;
     if (!font.loadFromFile("AGENCYR.ttf")) {
         cout << "Error loading font" << endl;
@@ -200,7 +200,7 @@ void level2Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     Boss b1(window, "Boss2.png");
     Clock bossShoot;
     vector<Bullets> bossBullets;
-    Bullets bossBullet(window, "Bombs.png");
+    Bullets bossBullet(window, "Boss2Bullet.png");
     Font font;
     if (!font.loadFromFile("AGENCYR.ttf")) {
         cout << "Error loading font" << endl;
@@ -365,7 +365,7 @@ void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     Boss b1(window, "Boss3.png");
     Clock bossShoot;
     vector<Bullets> bossBullets;
-    Bullets bossBullet(window, "Bombs.png");
+    Bullets bossBullet(window, "Boss3Bullet.png");
     Font font;
     if (!font.loadFromFile("AGENCYR.ttf")) {
         cout << "Error loading font" << endl;
@@ -594,7 +594,7 @@ void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     Boss b1(window, "Boss.png");
     Clock bossShoot;
     vector<Bullets> bossBullets;
-    Bullets bossBullet(window, "Bombs.png");
+    Bullets bossBullet(window, "Boss4Bullets.png");
     Font font;
     if (!font.loadFromFile("AGENCYR.ttf")) {
         cout << "Error loading font" << endl;

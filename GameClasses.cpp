@@ -170,11 +170,11 @@ class Asteroid {
         hits=0;
         asteroid.setScale(Vector2f(50 * size, 50 * size));
         asteroid.setPosition(Vector2f(rand() % window.getSize().x - 100, 0));
-        if ((asteroid.getPosition().x + Corners < window.getSize().x / 2)) {
-            asteroid.move(Corners, 0);
+        if(asteroid.getPosition().x+Corners>window.getSize().x ){
+            asteroid.setPosition(Vector2f(window.getSize().x/2, 0));
         }
-        else {
-            asteroid.move(-1 * Corners, 0);
+        else if(asteroid.getPosition().x-Corners  < window.getSize().x){
+            asteroid.setPosition(Vector2f(window.getSize().x/2, 0));
         }
     }
     void setRandomPosition(RenderWindow& window) {
