@@ -7,7 +7,7 @@ using namespace sf;
 void game(RenderWindow& window, string username) {
     Spaceship spaceship(window);
     //This is for playing a sound when the bullet is shot
- 
+    Revive revive(window, "Boss1.png");
 
     Bullets bullet(window, "bullets.png");
     Picture hearts[5] = { Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png") };
@@ -168,31 +168,32 @@ window.setFramerateLimit(stoi(settings[2]));
         if (levels == 5) {
             changelevel = true;
             if (asteroids.size() == 0) {
-                level1Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement,settings,HealthLossSound,gameSound);
+                level1Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement,settings,HealthLossSound,gameSound,revive);
                 changelevel = false;
             }
         }
         else if (levels == 10) {
             changelevel = true;
             if (asteroids.size() == 0) {
-                level2Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement,settings,HealthLossSound,gameSound);
+                level2Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement,settings,HealthLossSound,gameSound,revive);
                 changelevel = false;
             }
         }
         else if (levels == 15) {
             changelevel = true;
             if (asteroids.size() == 0) {
-                level3Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement, as, asteroids, explodedAsteroids, explodedAsteroidsTime, asteroidClock, multiplier, endMultiplier, Multiplier, settings,HealthLossSound,gameSound);
+                level3Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement, as, asteroids, explodedAsteroids, explodedAsteroidsTime, asteroidClock, multiplier, endMultiplier, Multiplier, settings,HealthLossSound,gameSound,revive);
                 changelevel = false;
             }
         }
         else if (levels == 20) {
             changelevel = true;
             if (asteroids.size() == 0) {
-                level4Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement, as, asteroids, explodedAsteroids, explodedAsteroidsTime, asteroidClock, multiplier, endMultiplier, Multiplier, settings,HealthLossSound,gameSound);
+                level4Boss(window, levels, spaceship, bullets, heart, score, highScore, hearts, scoretxt, highscoretxt, levelsTxt, bullet, clock, movement, as, asteroids, explodedAsteroids, explodedAsteroidsTime, asteroidClock, multiplier, endMultiplier, Multiplier, settings,HealthLossSound,gameSound,revive);
                 changelevel = false;
             }
         }
+        
         Event event;
         while (window.pollEvent(event)) {
             if (event.type == Event::Closed) {
@@ -327,6 +328,11 @@ window.setFramerateLimit(stoi(settings[2]));
         }
         // Ending the game
         if (heart <= 0) {
+            revive.SetHealth(heart);
+            if(heart==5)
+            {
+                continue;
+            }
             gameSound.stop();
             gameOverSound.play();
             bool quit=GameOver(window, score);
@@ -357,9 +363,11 @@ window.setFramerateLimit(stoi(settings[2]));
                 }
                 asteroids.erase(asteroids.begin(), asteroids.end());
                 bullets.erase(bullets.begin(), bullets.end());
+                revive.resetTimer(window);
         }
        
     }
+    revive.script(window,spaceship);
      scoretxt.setString("Score: " + to_string(score));
         highscoretxt.setString("High Score: " + to_string(highScore));
         levelsTxt.setString("Level: " + to_string(levels));

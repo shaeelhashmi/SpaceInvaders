@@ -368,7 +368,130 @@ class SpecialAsteroid {
         return specialast.getGlobalBounds();
     }
 };
+// class PowerUp {
+// public:
+//     PowerUp() {}
+//     virtual ~PowerUp() {}
+
+//     virtual void drawTo(RenderWindow& window) = 0;
+//     virtual FloatRect getGlobalBounds() = 0;
+//     virtual void script(int& hearts, bool& shieldActive, float& playerSpeed) = 0;
+//     virtual void move(double movement) = 0;
+// };
+
+// Revive class
+class Revive  {
+    Picture revive;
+    int revives;
+    Clock PowerUpTimer;
+public:
+    Revive(RenderWindow& window, string reviveText) : revive(reviveText) {
+        revive.setScale(Vector2f(window.getSize().x * 0.082f, window.getSize().y * 0.134f));
+        revive.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+        revives=0;
+    }
+    void increaseRevives() {
+        revives++;
+    }
+    void drawTo(RenderWindow& window)  {
+        revive.drawTo(window);
+    }
+
+    void move(double movement)  {
+        revive.move(0, movement);
+    }
+    FloatRect getGlobalBounds()  {
+        return revive.getGlobalBounds();
+    }
+    void script(RenderWindow& window,Spaceship& spaceship)  {
+        if(PowerUpTimer.getElapsedTime().asSeconds()>10){
+            
+            revive.move(0, 1);
+            revive.drawTo(window);
+            if(spaceship.getGlobalBounds().intersects(revive.getGlobalBounds())){
+                increaseRevives();
+                revive.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+                PowerUpTimer.restart();        
+            }
+            else if(revive.getPosition().y>window.getSize().y){
+                PowerUpTimer.restart();
+                 revive.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+            }
+
+        }
+        
+    }
+    void SetHealth(int &hearts) {
+        if(revives>0){
+            hearts=5;
+            revives--;
+        }
+    }
+    void incrementRevives() {
+        revives++;
+    }
+    void resetTimer(RenderWindow& window) {
+        PowerUpTimer.restart();
+        revive.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+    }
+};
+
+// Shield class
+// class Shield : public PowerUp {
+//     Picture shield;
+
+// public:
+//     Shield(RenderWindow& window, string shieldText) : shield(shieldText) {
+//         shield.setScale(Vector2f(window.getSize().x * 0.082f, window.getSize().y * 0.134f));
+//         shield.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+//     }
+
+//     void drawTo(RenderWindow& window) override {
+//         shield.drawTo(window);
+//     }
+
+//     void move(float movement)  override{
+//         float speed = 100.0f;
+//         shield.move(0, speed * movement);
+//     }
+
+//     FloatRect getGlobalBounds() override {
+//         return shield.getGlobalBounds();
+//     }
+
+//     void script(int& hearts, bool& shieldActive, float& playerSpeed) override {
+//         shieldActive = true; // Activate shield
+//     }
+// };
+
+// class Speed : public PowerUp {
+//     Picture speedP;
+
+// public:
+//     Speed(RenderWindow& window, string speedText) : speedP(speedText) {
+//         speedP.setScale(Vector2f(window.getSize().x * 0.082f, window.getSize().y * 0.134f));
+//         speedP.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+//     }
+
+//     void drawTo(RenderWindow& window) override {
+//         speedP.drawTo(window);
+//     }
+
+//     void move(float deltaTime) override {
+//         float speed = 100.0f;
+//         speedP.move(0, speed * deltaTime);
+//     }
+
+//     FloatRect getGlobalBounds() override {
+//         return speedP.getGlobalBounds();
+//     }
+
+//     void script(int& hearts, bool& shieldActive, float& playerSpeed) override {
+//         playerSpeed *= 1.5f; // Increase player speed by 50%
+//     }
+// };
 bool GameOver(RenderWindow& window,int score) {
+
     Button GoTomain("MAIN MENU", Vector2f(300, 80), 24, Color(141, 26, 22), Color::Black);
     Button PlayAgain("PLAY AGAIN", Vector2f(300, 80), 24, Color(141, 26, 22), Color::Black);
     Text GameOver;

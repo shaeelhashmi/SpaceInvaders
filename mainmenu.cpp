@@ -4,7 +4,7 @@ using namespace std;
 using namespace sf;
 void firstScreen(RenderWindow& window);
 void mainmenu(RenderWindow& window);
-void displayHighScore(RenderWindow& window) {
+void displayHighScore(RenderWindow& window,Sound &sound){
     Button Exit("Back to main menu", Vector2f(500, 80), 24, Color(141, 26, 22), Color::Black);
     Button ClearScores("Clear HighScores", Vector2f(500, 80), 24, Color(141, 26, 22), Color::Black);
     vector<Text> highScoresText;
@@ -56,6 +56,7 @@ void displayHighScore(RenderWindow& window) {
         }
 
     }
+    Clock clock;
     sort(highScores.rbegin(), highScores.rend());
     for (int i = 0; i < highScores.size() && i < 5; ++i) {
         highScoresText.push_back(Text(to_string(i + 1) + ". " + highScores[i].second + ": " + to_string(highScores[i].first), font, 24));
@@ -70,8 +71,13 @@ void displayHighScore(RenderWindow& window) {
     ClearScores.leftalign(Vector2f((window.getSize().x )-(ClearScores.getSize().x)-10, pos), Exit.getSize().x / 4);
     Exit.setFont(font);
     ClearScores.setFont(font);
+    sound.play();
     while (window.isOpen()) {
         window.clear();
+        if(clock.getElapsedTime().asSeconds() > sound.getBuffer()->getDuration().asSeconds()){
+            sound.play();
+            clock.restart();
+        }
         Event event;
         while (window.pollEvent(event)) {
             if (event.type == Event::Closed) {
@@ -169,11 +175,10 @@ void firstScreen(RenderWindow& window) {
                 }
                 else if (Highscore.buttonClicked(window)) {
                     menuMusic.stop();
-                    displayHighScore(window);
+                    displayHighScore(window,menuMusic);
                 }
                 else if (Settings.buttonClicked(window)) {
-                    menuMusic.stop();
-                settingsScreen(window);
+                settingsScreen(window,menuMusic);
                 ifstream settingsFile("settings.txt");
                 if (settingsFile.is_open()) {
                 string line;
@@ -186,7 +191,7 @@ void firstScreen(RenderWindow& window) {
             menuBuffer.loadFromFile("audios/NoSound.wav");
             }
             else{
-                menuBuffer.loadFromFile("audios/Mainmenu.wav");
+            menuBuffer.loadFromFile("audios/Mainmenu.wav");
             }    
             menuMusic.setBuffer(menuBuffer);
             menuMusic.play();
@@ -233,7 +238,6 @@ void mainmenu(RenderWindow& window) {
     nextButton.setPosition(Vector2f(850, 520));
 
 
-
     Text name("name:", font, 17);
     name.setFillColor(Color::White);
     name.setPosition(356.f, 199.f);
@@ -271,7 +275,6 @@ void mainmenu(RenderWindow& window) {
                 inputText.setString(input);
             }
         }
-
         window.clear(Color::Black);
         window.draw(textboxBackground);
         window.draw(inputText);

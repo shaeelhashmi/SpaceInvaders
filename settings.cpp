@@ -21,9 +21,8 @@ void writeToLine(string filename, int lineNumber, string newContent) {
     outFile.close();
 }
 
-void settingsScreen(RenderWindow& window) {
+void settingsScreen(RenderWindow& window,Sound &sound) {
     window.setFramerateLimit(30);
-
     Texture firstbg;
     Sprite firstsp(firstbg);
     Font font;
@@ -32,34 +31,26 @@ void settingsScreen(RenderWindow& window) {
     int difficultySelected, frameRateSelected;
     bool soundEnabled;
     file >> soundEnabled;
-
     Button headings[3] = { Button("Frame Rate", Vector2f(50, 30), 40, Color::Transparent, Color::White), Button("Difficulty", Vector2f(50, 30), 40, Color::Transparent, Color::White), Button("Sound", Vector2f(50, 30), 40, Color::Transparent, Color::White) };
     Button FPS[3] = { Button("30", Vector2f(70, 50), 20, Color::Blue, Color::Black), Button("60", Vector2f(70, 50), 20, Color::Blue, Color::Black), Button("90", Vector2f(70, 50), 20, Color::Blue, Color::Black) };
     Button Difficulty[3] = { Button("Easy", Vector2f(70, 50), 15, Color::Blue, Color::Black), Button("Medium", Vector2f(70, 50), 15, Color::Blue, Color::Black), Button("Hard", Vector2f(70, 50), 15, Color::Blue, Color::Black) };
     Button soundCheckbox("", Vector2f(40, 40), 0, Color::White, Color::Transparent);
     Button OK("OK", Vector2f(100, 50), 20, Color::Blue, Color::Black);
     string options[3];
-
     if (!firstbg.loadFromFile("bgspace.png")) {
         cout << "Failed to load background texture!" << endl;
         return;
     }
-
-
     if (!font.loadFromFile("LEMONMILK-Medium.otf")) {
         cout << "Failed to load font!" << endl;
         return;
     }
-
-
     soundCheckbox.setPosition(Vector2f(790, 410));
     checkMark.setPosition(Vector2f(790, 410));
     checkMark.setScale(Vector2f(40, 40));
     OK.setFont(font);
     OK.setPosition(Vector2f(650, 500));
-
     Difficulty[2].getText().Bold;
-
     for (int i = 0, y = 205; i < 3; i++) {
         headings[i].setFont(font);
         headings[i].setPosition(Vector2f(500, y));
@@ -75,7 +66,13 @@ void settingsScreen(RenderWindow& window) {
         Difficulty[i].setPosition(Vector2f(x, 300));
         x += 80;
     }
+    sound.play();
+    Clock clock;
     while (window.isOpen()) {
+      if(clock.getElapsedTime().asSeconds() > sound.getBuffer()->getDuration().asSeconds()){
+            sound.play();
+            clock.restart();
+        }
         Event event;
         while (window.pollEvent(event)) {
             if (event.type == Event::Closed) {
