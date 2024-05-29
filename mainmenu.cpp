@@ -64,7 +64,9 @@ bgSprite.setTexture(bgTexture);
                     }
                 }
             }
+
             window.clear();
+             window.draw(bgSprite);
             window.draw(a);
             Exit.drawTo(window);
             window.display();
@@ -113,11 +115,11 @@ bgSprite.setTexture(bgTexture);
             }
             
         }
-
+                 window.draw(bgSprite);
         for (int i = 0;i < highScoresText.size();i++) {
             window.draw(highScoresText[i]);
         }
-        window.draw(bgSprite);
+       
         Exit.drawTo(window);
         ClearScores.drawTo(window);
         window.display();
