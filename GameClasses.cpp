@@ -22,6 +22,7 @@ class Button {
     void setFont(Font& font) {
         text.setFont(font);
     }
+
     void setBackColor(Color color) {
         button.setFillColor(color);
     }
@@ -150,6 +151,11 @@ class Spaceship {
     }
     FloatRect getGlobalBounds() {
         return spaceship.getGlobalBounds();
+    }
+
+    void SetTexture(string filePath) {
+        spaceship.SetTexture(filePath);
+        spaceship.setScale(Vector2f(50, 50));
     }
 };
 
@@ -346,6 +352,7 @@ class SpecialAsteroid {
     public:
     SpecialAsteroid(RenderWindow& window, string specialtex) : specialast(specialtex) {
         specialast.setScale(Vector2f(50, 50));
+        srand(time(nullptr));
         specialast.setPosition(Vector2f(rand() % window.getSize().x - 100, 0));
     }
     void setRandomPosition(RenderWindow& window) {
@@ -368,25 +375,14 @@ class SpecialAsteroid {
         return specialast.getGlobalBounds();
     }
 };
-// class PowerUp {
-// public:
-//     PowerUp() {}
-//     virtual ~PowerUp() {}
 
-//     virtual void drawTo(RenderWindow& window) = 0;
-//     virtual FloatRect getGlobalBounds() = 0;
-//     virtual void script(int& hearts, bool& shieldActive, float& playerSpeed) = 0;
-//     virtual void move(double movement) = 0;
-// };
-
-// Revive class
 class Revive  {
     Picture revive;
     int revives;
     Clock PowerUpTimer;
 public:
     Revive(RenderWindow& window, string reviveText) : revive(reviveText) {
-        revive.setScale(Vector2f(window.getSize().x * 0.082f, window.getSize().y * 0.134f));
+        revive.setScale(Vector2f(50,50));
         revive.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
         revives=0;
     }
@@ -398,15 +394,18 @@ public:
     }
 
     void move(double movement)  {
-        revive.move(0, movement);
+        revive.move(0, movement * 2);
     }
     FloatRect getGlobalBounds()  {
         return revive.getGlobalBounds();
     }
+
+    int timer = rand() % 80;
+
     void script(RenderWindow& window,Spaceship& spaceship)  {
-        if(PowerUpTimer.getElapsedTime().asSeconds()>10){
+        if(PowerUpTimer.getElapsedTime().asSeconds()> timer){
             
-            revive.move(0, 1);
+            revive.move(0, 2);
             revive.drawTo(window);
             if(spaceship.getGlobalBounds().intersects(revive.getGlobalBounds())){
                 increaseRevives();
@@ -434,75 +433,121 @@ public:
         PowerUpTimer.restart();
         revive.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
     }
+
+    int getRevives() {
+        return revives;
+    }
 };
 
-// Shield class
-// class Shield : public PowerUp {
-//     Picture shield;
 
-// public:
-//     Shield(RenderWindow& window, string shieldText) : shield(shieldText) {
-//         shield.setScale(Vector2f(window.getSize().x * 0.082f, window.getSize().y * 0.134f));
-//         shield.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
-//     }
+class SpeedBoost {
+    Picture speedboost;
+    Clock PowerUpTimer;
+   
+    public:
+    SpeedBoost(RenderWindow& window, string speedboostText) : speedboost(speedboostText) {
+        speedboost.setScale(Vector2f(50, 50));
+        speedboost.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+    }
+    void drawTo(RenderWindow& window) {
+        speedboost.drawTo(window);
+    }
 
-//     void drawTo(RenderWindow& window) override {
-//         shield.drawTo(window);
-//     }
+    void move(double movement) {
+        speedboost.move(0, movement * 2);
+    }
 
-//     void move(float movement)  override{
-//         float speed = 100.0f;
-//         shield.move(0, speed * movement);
-//     }
+    FloatRect getGlobalBounds() {
+        return speedboost.getGlobalBounds();
+    }
+    
+    int timer = rand() % 40;
+    
+    void script(RenderWindow& window, Spaceship& spaceship,double &movement) {
+        if (PowerUpTimer.getElapsedTime().asSeconds() > timer) {
+            speedboost.move(0, 2);
+            speedboost.drawTo(window);
+            if (spaceship.getGlobalBounds().intersects(speedboost.getGlobalBounds())) {
+                movement *= 5.0;
+                PowerUpTimer.restart();
+                speedboost.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+            }
+            else if (speedboost.getPosition().y > window.getSize().y) {
+                PowerUpTimer.restart();
+                speedboost.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+            }
+        }
+    }
 
-//     FloatRect getGlobalBounds() override {
-//         return shield.getGlobalBounds();
-//     }
+    void Timeout(double &movement) {
+            if (PowerUpTimer.getElapsedTime().asSeconds() > 10) {
+                movement = 15.0;
+            }
+    }
+};
+  
+class HealthRegen {
+    Picture healthregen;
+    Clock PowerUpTimer;
+    public:
+    HealthRegen(RenderWindow& window, string healthregenText) : healthregen(healthregenText) {
+        healthregen.setScale(Vector2f(50, 50));
+        healthregen.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+    }
+    void drawTo(RenderWindow& window) {
+        healthregen.drawTo(window);
+    }
 
-//     void script(int& hearts, bool& shieldActive, float& playerSpeed) override {
-//         shieldActive = true; // Activate shield
-//     }
-// };
+    void move(double movement) {
+        healthregen.move(0, movement * 2);
+    }
 
-// class Speed : public PowerUp {
-//     Picture speedP;
+    FloatRect getGlobalBounds() {
+        return healthregen.getGlobalBounds();
+    }
+    int timer = rand() % 60;
+    void script(RenderWindow& window, Spaceship& spaceship, int &hearts) {
+        if (PowerUpTimer.getElapsedTime().asSeconds() > timer) {
+            healthregen.move(0, 2);
+            healthregen.drawTo(window);
+            if (spaceship.getGlobalBounds().intersects(healthregen.getGlobalBounds())) {
+                hearts += 2;
+                PowerUpTimer.restart();
+                healthregen.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+            }
+            else if (healthregen.getPosition().y > window.getSize().y) {
+                PowerUpTimer.restart();
+                healthregen.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+            }
+        }
+    }
+};
 
-// public:
-//     Speed(RenderWindow& window, string speedText) : speedP(speedText) {
-//         speedP.setScale(Vector2f(window.getSize().x * 0.082f, window.getSize().y * 0.134f));
-//         speedP.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
-//     }
-
-//     void drawTo(RenderWindow& window) override {
-//         speedP.drawTo(window);
-//     }
-
-//     void move(float deltaTime) override {
-//         float speed = 100.0f;
-//         speedP.move(0, speed * deltaTime);
-//     }
-
-//     FloatRect getGlobalBounds() override {
-//         return speedP.getGlobalBounds();
-//     }
-
-//     void script(int& hearts, bool& shieldActive, float& playerSpeed) override {
-//         playerSpeed *= 1.5f; // Increase player speed by 50%
-//     }
-// };
 bool GameOver(RenderWindow& window,int score) {
-
-    Button GoTomain("MAIN MENU", Vector2f(300, 80), 24, Color(141, 26, 22), Color::Black);
-    Button PlayAgain("PLAY AGAIN", Vector2f(300, 80), 24, Color(141, 26, 22), Color::Black);
+    Button GoTomain("MAIN MENU", Vector2f(300, 80), 24, Color::Transparent, Color::White);
+    Button PlayAgain("PLAY AGAIN", Vector2f(300, 80), 24, Color::Transparent, Color::White);
     Text GameOver;
 
-    Font font;
-    if (!font.loadFromFile("LEMONMILK-Medium.otf")) {
+     Texture GO;
+    if (!GO.loadFromFile("GameO.png")) {
         window.close();
     }
-    GameOver = Text("Game Over", font, 50);
-    Text Score = Text("Score:"+to_string(score), font, 20);
-    GameOver.setPosition((window.getSize().x / 2.0) - 135, window.getSize().y / 2.0 - 100);
+    Sprite GameO;
+    GameO.setTexture(GO);
+
+    Font font;
+    Font font_f;
+
+    if (!font_f.loadFromFile("Thorletto.otf")) {
+        window.close();
+    }
+
+    if (!font.loadFromFile("BuckBoard.ttf")) {
+        window.close();
+    }
+    GameOver = Text("Game Over", font_f, 55);
+    Text Score = Text("Score: "+to_string(score), font, 20);
+    GameOver.setPosition(Vector2f(500,325));
     GoTomain.setFont(font);
     PlayAgain.setFont(font);
     Score.setPosition((window.getSize().x / 2.0) - 60, (window.getSize().y / 2.0));
@@ -510,8 +555,11 @@ bool GameOver(RenderWindow& window,int score) {
     PlayAgain.setPosition(Vector2f((window.getSize().x / 2.0) + 5, window.getSize().y / 2 + 100));
     while (window.isOpen()) {
         window.clear();
+        
+        window.draw(GameO);
         GoTomain.drawTo(window);
         PlayAgain.drawTo((window));
+       
         Event event;
         while(window.pollEvent(event))
         {
@@ -530,6 +578,7 @@ bool GameOver(RenderWindow& window,int score) {
         }
         window.draw(GameOver);
         window.draw(Score);
+        
         window.display();
     }
    return true;
