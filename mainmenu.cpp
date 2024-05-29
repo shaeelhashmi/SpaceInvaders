@@ -5,14 +5,30 @@ using namespace sf;
 void firstScreen(RenderWindow& window);
 void mainmenu(RenderWindow& window);
 void displayHighScore(RenderWindow& window,Sound &sound){
-    Button Exit("Back to main menu", Vector2f(500, 80), 24, Color(141, 26, 22), Color::Black);
-    Button ClearScores("Clear HighScores", Vector2f(500, 80), 24, Color(141, 26, 22), Color::Black);
+    Button Exit("Back to Main Menu", Vector2f(350, 80), 24, Color::Transparent, Color::White);
+    Button ClearScores("Clear HighScores", Vector2f(350, 80), 24, Color::Transparent, Color::White);
     vector<Text> highScoresText;
     Font font;
-    if (!font.loadFromFile("LEMONMILK-Medium.otf")) {
+    Font highscorefont;
+    
+    if (!highscorefont.loadFromFile("Valorant.ttf")) {
         cout << "Failed to load font!" << endl;
         return;
     }
+    if (!font.loadFromFile("BuckBoard.ttf")) {
+        cout << "Failed to load font!" << endl;
+        return;
+    }
+Texture bgTexture;
+if (!bgTexture.loadFromFile("bgspace.png")) {
+    cout << "Failed to load background image!" << endl;
+    return;
+}
+
+Sprite bgSprite;
+bgSprite.setTexture(bgTexture);
+
+
     // Vector to store high score s 
     vector<pair<int, string>> highScores;
     // Reading high scores from the file
@@ -32,7 +48,7 @@ void displayHighScore(RenderWindow& window,Sound &sound){
     else {
         Exit.leftalign(Vector2f((window.getSize().x / 2) - (Exit.getSize().x / 2) , window.getSize().y / 2 + 40), Exit.getSize().x / 4);
         Exit.setFont(font);
-        Text a("No high scores found!", font, 24);
+        Text a("No high scores found!", highscorefont, 24);
         a.setPosition((window.getSize().x / 2) - 100, window.getSize().y / 2);
         while (window.isOpen()) {
 
@@ -63,12 +79,13 @@ void displayHighScore(RenderWindow& window,Sound &sound){
     }
     int pos = (window.getSize().y / 2) - (24 * highScoresText.size() / 2);
     for (int i = 0; i < highScoresText.size(); i++) {
+        highScoresText[i].setFont(highscorefont);
         highScoresText[i].setFillColor(Color::White);
         highScoresText[i].setPosition((window.getSize().x / 2) - 50, pos);
         pos += 50;
     }
-    Exit.leftalign(Vector2f(10 , pos), Exit.getSize().x / 4);
-    ClearScores.leftalign(Vector2f((window.getSize().x )-(ClearScores.getSize().x)-10, pos), Exit.getSize().x / 4);
+    Exit.setPosition(Vector2f(30,564));;
+    ClearScores.setPosition(Vector2f(785,564));
     Exit.setFont(font);
     ClearScores.setFont(font);
     sound.play();
@@ -100,6 +117,7 @@ void displayHighScore(RenderWindow& window,Sound &sound){
         for (int i = 0;i < highScoresText.size();i++) {
             window.draw(highScoresText[i]);
         }
+        window.draw(bgSprite);
         Exit.drawTo(window);
         ClearScores.drawTo(window);
         window.display();
@@ -134,12 +152,12 @@ void firstScreen(RenderWindow& window) {
 
     Sprite firstsp(firstbg);
 
-    Button playButton("PLAY", Vector2f(300, 80), 24, Color(141, 26, 22), Color::Black);
-    Button quitButton("QUIT", Vector2f(300, 80), 24, Color(141, 26, 22), Color::Black);
-    Button Highscore("HIGH SCORE", Vector2f(300, 80), 24, Color(141, 26, 22), Color::Black);
-    Button Settings("SETTINGS", Vector2f(300, 80), 24, Color(141, 26, 22), Color::Black);
+    Button playButton("PLAY", Vector2f(300, 80), 40, Color::Transparent, Color::White);
+    Button quitButton("QUIT", Vector2f(300, 80), 40, Color::Transparent, Color::White);
+    Button Highscore("HIGH SCORE", Vector2f(300, 80), 40, Color::Transparent, Color::White);
+    Button Settings("SETTINGS", Vector2f(300, 80), 40, Color::Transparent, Color::White);
     Font font;
-    if (!font.loadFromFile("LEMONMILK-Medium.otf")) {
+    if (!font.loadFromFile("BuckBoard.ttf")) {
         cout << "Failed to load font!" << endl;
         return;
     }
@@ -214,16 +232,26 @@ void mainmenu(RenderWindow& window) {
     string input;
     string settings[3];
 
-    Button backButton("back", Vector2f(205, 50), 24, Color(141, 26, 22), Color::Black);
-    Button nextButton("next", Vector2f(205, 50), 24, Color(141, 26, 22), Color::Black);
+    Button backButton("back", Vector2f(205, 50), 28, Color::Transparent, Color::White);
+    Button nextButton("next", Vector2f(205, 50), 28, Color::Transparent, Color::White);
 
     Font font;
-    if (!font.loadFromFile("LEMONMILK-Medium.otf")) {
+    if (!font.loadFromFile("BuckBoard.ttf")) {
         cout << "Failed to load font!" << endl;
         return;
     }
     backButton.setFont(font);
     nextButton.setFont(font);
+
+
+    Texture bgTexture;
+    if (!bgTexture.loadFromFile("bgspace.png")) {
+        cout << "Failed to load background image!" << endl;
+        return;
+    }
+
+    Sprite bgSprite;
+    bgSprite.setTexture(bgTexture);
 
     Text inputText;
     inputText.setFont(font);
@@ -234,17 +262,21 @@ void mainmenu(RenderWindow& window) {
     textboxBackground.setSize(Vector2f(590.f, 50.f));
     textboxBackground.setFillColor(Color::White);
 
-    backButton.setPosition(Vector2f(200, 520));
-    nextButton.setPosition(Vector2f(850, 520));
+    backButton.setPosition(Vector2f(400, 470));
+    nextButton.setPosition(Vector2f(830, 470));
 
 
     Text name("name:", font, 17);
     name.setFillColor(Color::White);
-    name.setPosition(356.f, 199.f);
 
     textboxBackground.setPosition((window.getSize().x / 2.0) - (textboxBackground.getSize().x / 2.0), window.getSize().y / 3.0);
     inputText.setPosition(textboxBackground.getPosition().x + 10, textboxBackground.getPosition().y + 10);
     
+    float textboxX = textboxBackground.getPosition().x;
+    float textboxY = textboxBackground.getPosition().y;
+
+    name.setPosition(textboxX, textboxY - name.getCharacterSize() - 10);
+
     while (window.isOpen()) {
         Event event;
         while (window.pollEvent(event)) {
@@ -275,7 +307,8 @@ void mainmenu(RenderWindow& window) {
                 inputText.setString(input);
             }
         }
-        window.clear(Color::Black);
+        window.clear();
+        window.draw(bgSprite);
         window.draw(textboxBackground);
         window.draw(inputText);
         window.draw(name);
