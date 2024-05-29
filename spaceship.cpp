@@ -7,7 +7,9 @@ using namespace sf;
 void game(RenderWindow& window, string username) {
     Spaceship spaceship(window);
     //This is for playing a sound when the bullet is shot
-    Revive revive(window, "Boss1.png");
+    Revive revive(window, "Revive.png");
+    SpeedBoost speedboost(window, "Speed.png");
+    HealthRegen healthregen(window, "hearts.png");
 
     Bullets bullet(window, "bullets.png");
     Picture hearts[5] = { Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png") };
@@ -120,29 +122,34 @@ void game(RenderWindow& window, string username) {
     gameOverSound.setBuffer(GameOverSoundBuffer);
     }
     Font font;
-    if (!font.loadFromFile("AGENCYR.ttf")) {
+    if (!font.loadFromFile("Valorant.ttf")) {
         cout << "Error loading font" << endl;
     }
-    Text scoretxt, highscoretxt, levelsTxt, Multiplier;
+    Text scoretxt, highscoretxt, levelsTxt, Multiplier,Revive;
     scoretxt.setFont(font);
-    scoretxt.setCharacterSize(24);
+    scoretxt.setCharacterSize(15);
     scoretxt.setFillColor(Color::White);
     scoretxt.setPosition(window.getSize().x - 150, 10);
 
     highscoretxt.setFont(font);
-    highscoretxt.setCharacterSize(24);
+    highscoretxt.setCharacterSize(15);
     highscoretxt.setFillColor(Color::White);
     highscoretxt.setPosition(window.getSize().x - 150, 40);
 
     levelsTxt.setFont(font);
-    levelsTxt.setCharacterSize(24);
+    levelsTxt.setCharacterSize(15);
     levelsTxt.setFillColor(Color::White);
     levelsTxt.setPosition(window.getSize().x - 150, 80);
 
     Multiplier.setFont(font);
-    Multiplier.setCharacterSize(24);
+    Multiplier.setCharacterSize(15);
     Multiplier.setFillColor(Color::White);
     Multiplier.setPosition(window.getSize().x - 150, 120);
+
+    Revive.setFont(font);
+    Revive.setCharacterSize(15);
+    Revive.setFillColor(Color::White);
+    Revive.setPosition(window.getSize().x - 150, 160);
 
     for (int i = 0; i < 5; i++) {
         hearts[i].setScale(Vector2f(40, 40));
@@ -367,15 +374,23 @@ window.setFramerateLimit(stoi(settings[2]));
         }
        
     }
+    speedboost.script(window,spaceship,movement);
+    speedboost.Timeout(movement);
+    
+    healthregen.script(window,spaceship,heart);
     revive.script(window,spaceship);
+
+     Revive.setString("Revive: "+to_string(revive.getRevives()));
      scoretxt.setString("Score: " + to_string(score));
         highscoretxt.setString("High Score: " + to_string(highScore));
         levelsTxt.setString("Level: " + to_string(levels));
         Multiplier.setString("Multiplier: " + to_string(multiplier));
+        
         window.draw(scoretxt);
         window.draw(highscoretxt);
         window.draw(levelsTxt);
         window.draw(Multiplier);
+         window.draw(Revive);
         window.display();
 }
 }
