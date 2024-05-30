@@ -400,7 +400,7 @@ public:
         return revive.getGlobalBounds();
     }
 
-    int timer = rand() % 80;
+    int timer = rand() % 120;
 
     void script(RenderWindow& window,Spaceship& spaceship)  {
         if(PowerUpTimer.getElapsedTime().asSeconds()> timer){
@@ -468,7 +468,7 @@ class SpeedBoost {
             speedboost.move(0, 2);
             speedboost.drawTo(window);
             if (spaceship.getGlobalBounds().intersects(speedboost.getGlobalBounds())) {
-                movement *= 5.0;
+                movement *= 3.0;
                 PowerUpTimer.restart();
                 speedboost.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
             }
@@ -511,7 +511,14 @@ class HealthRegen {
             healthregen.move(0, 2);
             healthregen.drawTo(window);
             if (spaceship.getGlobalBounds().intersects(healthregen.getGlobalBounds())) {
+                if(hearts<3)
+                {
                 hearts += 2;
+                }
+                else
+                {
+                    hearts=5;
+                }
                 PowerUpTimer.restart();
                 healthregen.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
             }
