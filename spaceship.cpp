@@ -33,6 +33,11 @@ void game(RenderWindow& window, string username) {
     // This will be increased for every asteroid destroyed
     vector<SpecialAsteroid> SpecialAste;
 
+    Texture gameBg;
+    Sprite gameSP;
+    gameBg.loadFromFile("SpaceBg.png");
+    gameSP.setTexture(gameBg);
+
     bool changelevel = false;
     int heart = 5;
     int multiplier = 1;
@@ -121,6 +126,7 @@ void game(RenderWindow& window, string username) {
     gameSound.setBuffer(GameSoundBuffer);
     gameOverSound.setBuffer(GameOverSoundBuffer);
     }
+
     Font font;
     if (!font.loadFromFile("Valorant.ttf")) {
         cout << "Error loading font" << endl;
@@ -162,7 +168,8 @@ void game(RenderWindow& window, string username) {
     gameSound.play();
     Clock GameSoundTimer;
 window.setFramerateLimit(stoi(settings[2]));
-    while (window.isOpen()) {      
+    while (window.isOpen()) { 
+            
         if(GameSoundTimer.getElapsedTime().asSeconds()>gameSound.getBuffer()->getDuration().asSeconds())
         {
             gameSound.play();
@@ -234,6 +241,7 @@ window.setFramerateLimit(stoi(settings[2]));
             multiplier = 1;
         }
         window.clear();
+        window.draw(gameSP);
         for (int i = 0; i < bullets.size(); i++) {
             if (bullets[i].getPosition().y < 0) {
                 bullets.erase(bullets.begin() + i);
@@ -386,6 +394,7 @@ window.setFramerateLimit(stoi(settings[2]));
         levelsTxt.setString("Level: " + to_string(levels));
         Multiplier.setString("Multiplier: " + to_string(multiplier));
         
+
         window.draw(scoretxt);
         window.draw(highscoretxt);
         window.draw(levelsTxt);
