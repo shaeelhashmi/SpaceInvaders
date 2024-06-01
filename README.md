@@ -36,8 +36,15 @@ This is a space shooter game made using the C++ framework SFML, implementing the
 ### Prerequistes:
 Make sure SFML is installed and linked on your compiler.
 ### Installation:
-* You can install the zip file of the project from the repo  at [repo](https://github.com/shaeelhashmi/Spaceshipgame-SFML)
-* If you have git installed type git clone https://github.com/shaeelhashmi/Spaceshipgame-SFML to install the game on your pc, run cd Spaceshipgame-SFML after installation.
+* You can install the zip file of the project from [here](https://github.com/shaeelhashmi/Spaceshipgame-SFML)
+* If you have git installed type
+```
+git clone https://github.com/shaeelhashmi/Spaceshipgame-SFML
+```
+run 
+```
+cd Spaceshipgame-SFML
+```
 ### Execution:
 * Execute the mainmenu.cpp file.
 * If you are using any linux distribution follow these steps:
