@@ -34,6 +34,8 @@ This is a space shooter game made using the C++ framework SFML, implementing the
 * <b><u>Shaeel Hashmi</u></b> - All features of Boss fights, HighScore screen, Spaceship control and Revive Powerup.
 ## Getting Started:
 ### Prerequistes:
+* A C++ compiler like g++
+* SFML installed and linked to the C++ compiler
 Make sure SFML is installed and linked on your compiler.
 ### Installation:
 * You can install the zip file of the project from [here](https://github.com/shaeelhashmi/Spaceshipgame-SFML)
@@ -41,7 +43,7 @@ Make sure SFML is installed and linked on your compiler.
 ```
 git clone https://github.com/shaeelhashmi/Spaceshipgame-SFML
 ```
-run 
+Then run 
 ```
 cd Spaceshipgame-SFML
 ```
