@@ -1,1 +1,5 @@
-da 0
+dasd 585
+sda 335
+jdajs 65
+fasf 40
+sda 10

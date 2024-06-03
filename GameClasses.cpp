@@ -375,46 +375,57 @@ class SpecialAsteroid {
         return specialast.getGlobalBounds();
     }
 };
-
-class Revive  {
-    Picture revive;
-    int revives;
+class Powerups{
+protected:
+    Picture powerup;
     Clock PowerUpTimer;
 public:
-    Revive(RenderWindow& window, string reviveText) : revive(reviveText) {
-        revive.setScale(Vector2f(50,50));
-        revive.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+Powerups(string text,RenderWindow &window):powerup(text){
+    powerup.setScale(Vector2f(50,50));
+    powerup.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+}
+void move(double movement){
+    powerup.move(0, movement * 2);
+}
+void drawTo(RenderWindow& window){
+    powerup.drawTo(window);
+}
+void ResetTimer(RenderWindow& window){
+    PowerUpTimer.restart();
+   powerup.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+}
+FloatRect getGlobalBounds(){
+    return powerup.getGlobalBounds();
+}
+};
+class Revive:public Powerups    {
+
+    int revives;
+    int timer;
+public:
+    Revive(RenderWindow& window, string reviveText) : Powerups(reviveText,window) {
+        timer = rand() % 120;
         revives=0;
     }
     void increaseRevives() {
         revives++;
     }
-    void drawTo(RenderWindow& window)  {
-        revive.drawTo(window);
-    }
-
-    void move(double movement)  {
-        revive.move(0, movement * 2);
-    }
-    FloatRect getGlobalBounds()  {
-        return revive.getGlobalBounds();
-    }
-
-    int timer = rand() % 120;
-
+    
     void script(RenderWindow& window,Spaceship& spaceship)  {
-        if(PowerUpTimer.getElapsedTime().asSeconds()> timer){
-            
-            revive.move(0, 2);
-            revive.drawTo(window);
-            if(spaceship.getGlobalBounds().intersects(revive.getGlobalBounds())){
+        if(PowerUpTimer.getElapsedTime().asSeconds()> timer){    
+            powerup.move(0, 2);
+            powerup.drawTo(window);
+            if(spaceship.getGlobalBounds().intersects(powerup.getGlobalBounds())){
                 increaseRevives();
-                revive.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
-                PowerUpTimer.restart();        
-            }
-            else if(revive.getPosition().y>window.getSize().y){
+                powerup.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
                 PowerUpTimer.restart();
-                 revive.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+                timer=rand()%120;        
+            }
+            else if(powerup.getPosition().y>window.getSize().y){
+                PowerUpTimer.restart();
+                powerup.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+                timer=rand()%120;
+                
             }
 
         }
@@ -429,56 +440,35 @@ public:
     void incrementRevives() {
         revives++;
     }
-    void resetTimer(RenderWindow& window) {
-        PowerUpTimer.restart();
-        revive.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
-    }
-
     int getRevives() {
         return revives;
     }
 };
 
 
-class SpeedBoost {
-    Picture speedboost;
-    Clock PowerUpTimer;
-   
+class SpeedBoost:public Powerups {
+     int timer ;
     public:
-    SpeedBoost(RenderWindow& window, string speedboostText) : speedboost(speedboostText) {
-        speedboost.setScale(Vector2f(50, 50));
-        speedboost.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
-    }
-    void drawTo(RenderWindow& window) {
-        speedboost.drawTo(window);
-    }
-
-    void move(double movement) {
-        speedboost.move(0, movement * 2);
-    }
-
-    FloatRect getGlobalBounds() {
-        return speedboost.getGlobalBounds();
-    }
-    
-    int timer = rand() % 40;
-    
+    SpeedBoost(RenderWindow& window, string speedboostText) : Powerups(speedboostText,window) {
+        timer=rand()%40;
+    }   
     void script(RenderWindow& window, Spaceship& spaceship,double &movement) {
         if (PowerUpTimer.getElapsedTime().asSeconds() > timer) {
-            speedboost.move(0, 2);
-            speedboost.drawTo(window);
-            if (spaceship.getGlobalBounds().intersects(speedboost.getGlobalBounds())) {
+            powerup.move(0, 2);
+            powerup.drawTo(window);
+            if (spaceship.getGlobalBounds().intersects(powerup.getGlobalBounds())) {
                 movement *= 3.0;
                 PowerUpTimer.restart();
-                speedboost.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+                powerup.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+                timer=rand()%40;
             }
-            else if (speedboost.getPosition().y > window.getSize().y) {
+            else if (powerup.getPosition().y > window.getSize().y) {
                 PowerUpTimer.restart();
-                speedboost.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+                powerup.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+                timer=rand()%40;
             }
         }
     }
-
     void Timeout(double &movement) {
             if (PowerUpTimer.getElapsedTime().asSeconds() > 10) {
                 movement = 15.0;
@@ -486,31 +476,18 @@ class SpeedBoost {
     }
 };
   
-class HealthRegen {
-    Picture healthregen;
-    Clock PowerUpTimer;
+class HealthRegen:public Powerups{
+int timer ;
     public:
-    HealthRegen(RenderWindow& window, string healthregenText) : healthregen(healthregenText) {
-        healthregen.setScale(Vector2f(50, 50));
-        healthregen.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+    HealthRegen(RenderWindow& window, string healthregenText) : Powerups(healthregenText,window) {
+        timer=rand()%60;
     }
-    void drawTo(RenderWindow& window) {
-        healthregen.drawTo(window);
-    }
-
-    void move(double movement) {
-        healthregen.move(0, movement * 2);
-    }
-
-    FloatRect getGlobalBounds() {
-        return healthregen.getGlobalBounds();
-    }
-    int timer = rand() % 60;
+ 
     void script(RenderWindow& window, Spaceship& spaceship, int &hearts) {
         if (PowerUpTimer.getElapsedTime().asSeconds() > timer) {
-            healthregen.move(0, 2);
-            healthregen.drawTo(window);
-            if (spaceship.getGlobalBounds().intersects(healthregen.getGlobalBounds())) {
+            powerup.move(0, 2);
+            powerup.drawTo(window);
+            if (spaceship.getGlobalBounds().intersects(powerup.getGlobalBounds())) {
                 if(hearts<3)
                 {
                 hearts += 2;
@@ -520,11 +497,13 @@ class HealthRegen {
                     hearts=5;
                 }
                 PowerUpTimer.restart();
-                healthregen.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+                powerup.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+                timer=rand()%60;
             }
-            else if (healthregen.getPosition().y > window.getSize().y) {
+            else if (powerup.getPosition().y > window.getSize().y) {
                 PowerUpTimer.restart();
-                healthregen.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+                powerup.setPosition(Vector2f(rand() % (window.getSize().x - 100), 0));
+                timer=rand()%60;
             }
         }
     }

@@ -377,8 +377,13 @@ window.setFramerateLimit(stoi(settings[2]));
                     hearts[i].setPosition(Vector2f(10 + (i * 50), 20));
                 }
                 asteroids.erase(asteroids.begin(), asteroids.end());
+                explodedAsteroids.erase(explodedAsteroids.begin(), explodedAsteroids.end());
                 bullets.erase(bullets.begin(), bullets.end());
-                revive.resetTimer(window);
+                revive.ResetTimer(window);
+                speedboost.ResetTimer(window);
+                healthregen.ResetTimer(window);
+                SpecialAste.erase(SpecialAste.begin(), SpecialAste.end());
+                asteroidClock.restart();
         }
        
     }
