@@ -52,8 +52,12 @@ cd Spaceshipgame-SFML
 * If you are using any linux distribution follow these steps:
    * Go the project directory.
    * In the terminal right the following commands:
-       * g++ mainmenu.cpp -o myprog -lsfml-system -lsfml-graphics -lsfml-window -lsfml-audio.
-       * ./myprog
+       * ```
+         g++ mainmenu.cpp -o myprog -lsfml-system -lsfml-graphics -lsfml-window -lsfml-audio.
+         ```
+       * ```
+         ./myprog
+         ```
 * Play the game and enjoy     
        
                  
