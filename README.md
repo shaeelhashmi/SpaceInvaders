@@ -37,6 +37,8 @@ This is a space shooter game made using the C++ framework SFML, implementing the
 * A C++ compiler like g++
 * SFML installed and linked to the C++ compiler
 Make sure SFML is installed and linked on your compiler.
+### Video Demonstration:
+Watch this video to see the game in action. Video link [here](https://www.linkedin.com/feed/update/urn:li:activity:7202682563788689408/)
 ### Installation:
 * You can install the zip file of the project from [here](https://github.com/shaeelhashmi/Spaceshipgame-SFML)
 * If you have git installed type
