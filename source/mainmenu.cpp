@@ -20,7 +20,7 @@ void displayHighScore(RenderWindow& window,Sound &sound){
         return;
     }
 Texture bgTexture;
-if (!bgTexture.loadFromFile("bgspace.png")) {
+if (!bgTexture.loadFromFile("pictures/bgspace.png")) {
     cout << "Failed to load background image!" << endl;
     return;
 }
@@ -147,7 +147,7 @@ void firstScreen(RenderWindow& window) {
     Sound menuMusic;    
     menuMusic.setBuffer(menuBuffer);
     Texture firstbg;
-    if (!firstbg.loadFromFile("bgspace.png")) {
+    if (!firstbg.loadFromFile("pictures/bgspace.png")) {
         cout << "Failed to load background texture!" << endl;
         return;
     }

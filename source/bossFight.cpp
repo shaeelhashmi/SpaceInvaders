@@ -1,50 +1,48 @@
 #include "GameClasses.cpp"
 //This is the first boss that will spawn after the first 4 levels
-void setVal(double &bulletSpeed,double &teleportationTimer,string Setting[],RenderWindow &window){
-    if(Setting[1] == "easy"){
-         teleportationTimer = teleportationTimer+2.0;
-        bulletSpeed =window.getSize().y*(bulletSpeed-0.002);
+void setVal(double& bulletSpeed, double& teleportationTimer, string Setting[], RenderWindow& window) {
+    if (Setting[1] == "easy") {
+        teleportationTimer = teleportationTimer + 2.0;
+        bulletSpeed = window.getSize().y * (bulletSpeed - 0.002);
     }
-    else if(Setting[1] == "medium"){
-    teleportationTimer = teleportationTimer+2;
-       bulletSpeed=window.getSize().y*(bulletSpeed-0.002);
+    else if (Setting[1] == "medium") {
+        teleportationTimer = teleportationTimer + 2;
+        bulletSpeed = window.getSize().y * (bulletSpeed - 0.002);
     }
-    else if(Setting[1] == "hard"){
+    else if (Setting[1] == "hard") {
         teleportationTimer = teleportationTimer;
-        bulletSpeed =window.getSize().y*(bulletSpeed-0.002);
-        cout<<bulletSpeed;
+        bulletSpeed = window.getSize().y * (bulletSpeed - 0.002);
+        cout << bulletSpeed;
     }
 }
-void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement,string Setting[],Sound &HealthLoss,Sound &GameSound,Revive &revive) {
+void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement, string Setting[], Sound& HealthLoss, Sound& GameSound, Revive& revive) {
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
     window.clear();
     double teleportationTimer = 10;
     double bulletSpeed = 0.007;
-    setVal(bulletSpeed,teleportationTimer,Setting,window);
+    setVal(bulletSpeed, teleportationTimer, Setting, window);
     //Creating bullet sound
-   SoundBuffer bulletBuffer;
+    SoundBuffer bulletBuffer;
     SoundBuffer BossbulletsBuffer;
-      if(Setting[0]=="0")
-    {
+    if (Setting[0] == "0") {
         bulletBuffer.loadFromFile("audios/NoSound.wav");
         BossbulletsBuffer.loadFromFile("audios/NoSound.wav");
     }
-    else
-    {
-    if (!bulletBuffer.loadFromFile("audios/BulletShoot.wav")) {
-        cout << "Error loading bullet sound" << endl;
-    }
+    else {
+        if (!bulletBuffer.loadFromFile("audios/BulletShoot.wav")) {
+            cout << "Error loading bullet sound" << endl;
+        }
 
-     BossbulletsBuffer.loadFromFile("audios/BossBullet.wav");
+        BossbulletsBuffer.loadFromFile("audios/BossBullet.wav");
     }
-    Sound bulletSound(bulletBuffer); 
+    Sound bulletSound(bulletBuffer);
     Sound BossBulletsSound(BossbulletsBuffer);
 
     bool a = false;
-    Boss b1(window, "Boss1.png");
+    Boss b1(window, "pictures/Boss1.png");
     Clock bossShoot;
     vector<Bullets> bossBullets;
-    Bullets bossBullet(window, "Boss1Bullet.png");
+    Bullets bossBullet(window, "pictures/Boss1Bullet.png");
     Font font;
     if (!font.loadFromFile("AGENCYR.ttf")) {
         cout << "Error loading font" << endl;
@@ -104,7 +102,7 @@ void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
             }
         }
 
-        
+
         //This condition will check if the spaceship bullets has collided with the boss
         for (int i = 0;i < bullets.size();i++) {
             if (bullets[i].getGlobalBounds().intersects(b1.getGlobalBounds())) {
@@ -156,16 +154,14 @@ void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
         }
         if (heart <= 0) {
             revive.SetHealth(heart);
-            if(heart<=0)
-            {
+            if (heart <= 0) {
                 return;
             }
-            else{
-                  continue;
+            else {
+                continue;
             }
         }
-       if(gameSound.getElapsedTime().asSeconds()>GameSound.getBuffer()->getDuration().asSeconds())
-        {
+        if (gameSound.getElapsedTime().asSeconds() > GameSound.getBuffer()->getDuration().asSeconds()) {
             GameSound.play();
             gameSound.restart();
         }
@@ -187,35 +183,33 @@ void level1Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     }
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
 }
-void level2Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement,string Setting[],Sound &HealthLoss,Sound &GameSound,Revive &revive) {
+void level2Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement, string Setting[], Sound& HealthLoss, Sound& GameSound, Revive& revive) {
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
-   double teleportationTimer = 8;
+    double teleportationTimer = 8;
     double bulletSpeed = 0.009;
-    setVal(bulletSpeed,teleportationTimer,Setting,window);
+    setVal(bulletSpeed, teleportationTimer, Setting, window);
     SoundBuffer bulletBuffer;
     SoundBuffer BossbulletsBuffer;
-      if(Setting[0]=="0")
-    {
+    if (Setting[0] == "0") {
         bulletBuffer.loadFromFile("audios/NoSound.wav");
         BossbulletsBuffer.loadFromFile("audios/NoSound.wav");
     }
-    else
-    {
-    if (!bulletBuffer.loadFromFile("audios/BulletShoot.wav")) {
-        cout << "Error loading bullet sound" << endl;
-    }
+    else {
+        if (!bulletBuffer.loadFromFile("audios/BulletShoot.wav")) {
+            cout << "Error loading bullet sound" << endl;
+        }
 
-     BossbulletsBuffer.loadFromFile("audios/BossBullet.wav");
+        BossbulletsBuffer.loadFromFile("audios/BossBullet.wav");
     }
-    Sound bulletSound(bulletBuffer); 
+    Sound bulletSound(bulletBuffer);
     Sound BossBulletsSound(BossbulletsBuffer);
 
     bulletSound.setBuffer(bulletBuffer);
     bool a = false;
-    Boss b1(window, "Boss2.png");
+    Boss b1(window, "pictures/Boss2.png");
     Clock bossShoot;
     vector<Bullets> bossBullets;
-    Bullets bossBullet(window, "Boss2Bullet.png");
+    Bullets bossBullet(window, "pictures/Boss2Bullet.png");
     Font font;
     if (!font.loadFromFile("AGENCYR.ttf")) {
         cout << "Error loading font" << endl;
@@ -277,7 +271,7 @@ void level2Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
             }
         }
 
-       
+
         //This condition will check if the spaceship bullets has collided with the boss
         for (int i = 0;i < bullets.size();i++) {
             if (bullets[i].getGlobalBounds().intersects(b1.getGlobalBounds())) {
@@ -328,17 +322,15 @@ void level2Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
             hearts[i].drawTo(window);
         }
         if (heart <= 0) {
-  revive.SetHealth(heart);
-            if(heart<=0)
-            {
+            revive.SetHealth(heart);
+            if (heart <= 0) {
                 return;
             }
-            else{
-                  continue;
+            else {
+                continue;
             }
         }
-          if(gameSound.getElapsedTime().asSeconds()>GameSound.getBuffer()->getDuration().asSeconds())
-        {
+        if (gameSound.getElapsedTime().asSeconds() > GameSound.getBuffer()->getDuration().asSeconds()) {
             GameSound.play();
             gameSound.restart();
         }
@@ -362,40 +354,38 @@ void level2Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     }
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
 }
-void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement, Asteroid& as, vector<Asteroid>& asteroids, vector<Asteroid>& explodedAsteroids, vector<Clock>& explodedAsteroidsTime, Clock& asteroidClock, int& multiplier, Clock& endMultiplier, Text& Multiplier, string settings[],Sound &HealthLoss,Sound &GameSound,Revive &revive) {
+void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement, Asteroid& as, vector<Asteroid>& asteroids, vector<Asteroid>& explodedAsteroids, vector<Clock>& explodedAsteroidsTime, Clock& asteroidClock, int& multiplier, Clock& endMultiplier, Text& Multiplier, string settings[], Sound& HealthLoss, Sound& GameSound, Revive& revive) {
     window.clear();
-   double teleportationTimer = 8;
+    double teleportationTimer = 8;
     double bulletSpeed = 0.01;
-    setVal(bulletSpeed,teleportationTimer,settings,window);
+    setVal(bulletSpeed, teleportationTimer, settings, window);
     int temp = multiplier;
     SoundBuffer bulletBuffer;
     SoundBuffer asteroidSoundbuffer;
     SoundBuffer BossbulletsBuffer;
-   if(settings[0]=="0")
-    {
+    if (settings[0] == "0") {
         bulletBuffer.loadFromFile("audios/NoSound.wav");
         asteroidSoundbuffer.loadFromFile("audios/NoSound.wav");
         BossbulletsBuffer.loadFromFile("audios/NoSound.wav");
     }
-    else
-    {
-    if (!bulletBuffer.loadFromFile("audios/BulletShoot.wav")) {
-        cout << "Error loading bullet sound" << endl;
+    else {
+        if (!bulletBuffer.loadFromFile("audios/BulletShoot.wav")) {
+            cout << "Error loading bullet sound" << endl;
+        }
+        asteroidSoundbuffer.loadFromFile("audios/AsteroidExplosion.wav");
+        BossbulletsBuffer.loadFromFile("audios/BossBullet.wav");
     }
-    asteroidSoundbuffer.loadFromFile("audios/AsteroidExplosion.wav");
-     BossbulletsBuffer.loadFromFile("audios/BossBullet.wav");
-    }
-    Sound bulletSound(bulletBuffer); 
+    Sound bulletSound(bulletBuffer);
     Sound BossBulletsSound(BossbulletsBuffer);
     Sound asteroidSound(asteroidSoundbuffer);
 
     bulletSound.setBuffer(bulletBuffer);
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
     bool a = false;
-    Boss b1(window, "Boss3.png");
+    Boss b1(window, "pictures/Boss3.png");
     Clock bossShoot;
     vector<Bullets> bossBullets;
-    Bullets bossBullet(window, "Boss3Bullet.png");
+    Bullets bossBullet(window, "pictures/Boss3Bullet.png");
     Font font;
     if (!font.loadFromFile("AGENCYR.ttf")) {
         cout << "Error loading font" << endl;
@@ -459,8 +449,8 @@ void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
             }
         }
         for (int i = 0; i < asteroids.size(); i++) {
-            asteroids[i].SetTexture("Asteroid.png");
-            asteroids[i].move(window, levels,settings[1]);
+            asteroids[i].SetTexture("pictures/Asteroid.png");
+            asteroids[i].move(window, levels, settings[1]);
             asteroids[i].drawTo(window);
             if (spaceship.getGlobalBounds().intersects(asteroids[i].getGlobalBounds())) {
                 heart--;
@@ -473,7 +463,7 @@ void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
                 if (asteroids[i].getGlobalBounds().intersects(bullets[j].getGlobalBounds())) {
                     asteroidSound.play();
                     Clock c;
-                    asteroids[i].SetTexture("AsteroidDestructions.png");
+                    asteroids[i].SetTexture("pictures/AsteroidDestructions.png");
                     explodedAsteroids.push_back(asteroids[i]);
                     explodedAsteroidsTime.push_back(c);
                     int asteroidSize = asteroids[i].getSizeValue();
@@ -507,12 +497,12 @@ void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
                 explodedAsteroidsTime.erase(explodedAsteroidsTime.begin() + i);
             }
             else {
-                explodedAsteroids[i].SetTexture("AsteroidDestructions.png");
+                explodedAsteroids[i].SetTexture("pictures/AsteroidDestructions.png");
                 explodedAsteroids[i].drawTo(window);
             }
         }
 
-        
+
         //This condition will check if the spaceship bullets has collided with the boss
         for (int i = 0;i < bullets.size();i++) {
             if (bullets[i].getGlobalBounds().intersects(b1.getGlobalBounds())) {
@@ -550,7 +540,7 @@ void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
         }
         for (int i = 0;i < bossBullets.size();i++) {
             if (bossBullets[i].getPosition().y > 0) {
-                bossBullets[i].move(0,bulletSpeed);
+                bossBullets[i].move(0, bulletSpeed);
                 bossBullets[i].drawTo(window);
             }
             else {
@@ -563,16 +553,14 @@ void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
         }
         if (heart <= 0) {
             revive.SetHealth(heart);
-            if(heart<=0)
-            {
+            if (heart <= 0) {
                 return;
             }
-            else{
-                  continue;
+            else {
+                continue;
             }
         }
-        if(gameSound.getElapsedTime().asSeconds()>GameSound.getBuffer()->getDuration().asSeconds())
-        {
+        if (gameSound.getElapsedTime().asSeconds() > GameSound.getBuffer()->getDuration().asSeconds()) {
             GameSound.play();
             gameSound.restart();
         }
@@ -598,32 +586,30 @@ void level3Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     }
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
 }
-void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement, Asteroid& as, vector<Asteroid>& asteroids, vector<Asteroid>& explodedAsteroids, vector<Clock>& explodedAsteroidsTime, Clock& asteroidClock, int& multiplier, Clock& endMultiplier, Text& Multiplier, string settings[],Sound &HealthLoss,Sound &GameSound,Revive &revive) {
+void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<Bullets>& bullets, int& heart, int& score, int highScore, Picture hearts[], Text& scoretxt, Text& highscoretxt, Text& levelsTxt, Bullets& bullet, Clock& clock, double movement, Asteroid& as, vector<Asteroid>& asteroids, vector<Asteroid>& explodedAsteroids, vector<Clock>& explodedAsteroidsTime, Clock& asteroidClock, int& multiplier, Clock& endMultiplier, Text& Multiplier, string settings[], Sound& HealthLoss, Sound& GameSound, Revive& revive) {
     spaceship.setPosition(Vector2f(window.getSize().x / 2, window.getSize().y - 100));
     double teleportationTimer = 5;
     double bulletSpeed = 0.01;
-    setVal(bulletSpeed,teleportationTimer,settings,window);
-      SoundBuffer bulletBuffer;
+    setVal(bulletSpeed, teleportationTimer, settings, window);
+    SoundBuffer bulletBuffer;
     SoundBuffer asteroidSoundbuffer;
     SoundBuffer BossbulletsBuffer;
     SoundBuffer MinionBuffer;
-   if(settings[0]=="0")
-    {
+    if (settings[0] == "0") {
         bulletBuffer.loadFromFile("audios/NoSound.wav");
         asteroidSoundbuffer.loadFromFile("audios/NoSound.wav");
         BossbulletsBuffer.loadFromFile("audios/NoSound.wav");
         MinionBuffer.loadFromFile("audios/NoSound.wav");
     }
-    else
-    {
-    if (!bulletBuffer.loadFromFile("audios/BulletShoot.wav")) {
-        cout << "Error loading bullet sound" << endl;
+    else {
+        if (!bulletBuffer.loadFromFile("audios/BulletShoot.wav")) {
+            cout << "Error loading bullet sound" << endl;
+        }
+        asteroidSoundbuffer.loadFromFile("audios/AsteroidExplosion.wav");
+        BossbulletsBuffer.loadFromFile("audios/BossBullet.wav");
+        MinionBuffer.loadFromFile("audios/MinionBomb.wav");
     }
-    asteroidSoundbuffer.loadFromFile("audios/AsteroidExplosion.wav");
-     BossbulletsBuffer.loadFromFile("audios/BossBullet.wav");
-     MinionBuffer.loadFromFile("audios/MinionBomb.wav");
-    }
-    Sound bulletSound(bulletBuffer); 
+    Sound bulletSound(bulletBuffer);
     Sound BossBulletsSound(BossbulletsBuffer);
     Sound asteroidSound(asteroidSoundbuffer);
     Sound minionStrike(MinionBuffer);
@@ -631,17 +617,17 @@ void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
     bulletSound.setBuffer(bulletBuffer);
     int temp = multiplier;
     bool startStrikebool = false;
-    AirStrikeMinion minion(window, "MinionShip.png");
+    AirStrikeMinion minion(window, "pictures/MinionShip.png");
     vector<Bullets> minionBullets;
-    Bullets minionBullet(window, "Minion.png");
+    Bullets minionBullet(window, "pictures/Minion.png");
     Clock startStrike;
     Clock minionShoot;
     bool a = false;
 
-    Boss b1(window, "Boss.png");
+    Boss b1(window, "pictures/Boss.png");
     Clock bossShoot;
     vector<Bullets> bossBullets;
-    Bullets bossBullet(window, "Boss4Bullets.png");
+    Bullets bossBullet(window, "pictures/Boss4Bullets.png");
     Font font;
     if (!font.loadFromFile("AGENCYR.ttf")) {
         cout << "Error loading font" << endl;
@@ -704,8 +690,8 @@ void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
             }
         }
         for (int i = 0; i < asteroids.size(); i++) {
-            asteroids[i].SetTexture("Asteroid.png");
-            asteroids[i].move(window, levels,settings[1]);
+            asteroids[i].SetTexture("pictures/Asteroid.png");
+            asteroids[i].move(window, levels, settings[1]);
             asteroids[i].drawTo(window);
             if (spaceship.getGlobalBounds().intersects(asteroids[i].getGlobalBounds())) {
                 HealthLoss.play();
@@ -719,7 +705,7 @@ void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
                 if (asteroids[i].getGlobalBounds().intersects(bullets[j].getGlobalBounds())) {
                     Clock c;
                     asteroidSound.play();
-                    asteroids[i].SetTexture("AsteroidDestructions.png");
+                    asteroids[i].SetTexture("pictures/AsteroidDestructions.png");
                     explodedAsteroids.push_back(asteroids[i]);
                     explodedAsteroidsTime.push_back(c);
                     int asteroidSize = asteroids[i].getSizeValue();
@@ -753,7 +739,7 @@ void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
                 explodedAsteroidsTime.erase(explodedAsteroidsTime.begin() + i);
             }
             else {
-                explodedAsteroids[i].SetTexture("AsteroidDestructions.png");
+                explodedAsteroids[i].SetTexture("pictures/AsteroidDestructions.png");
                 explodedAsteroids[i].drawTo(window);
             }
         }
@@ -827,7 +813,7 @@ void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
         }
         for (int i = 0;i < bossBullets.size();i++) {
             if (bossBullets[i].getPosition().y > 0) {
-                bossBullets[i].move(0,bulletSpeed);
+                bossBullets[i].move(0, bulletSpeed);
                 bossBullets[i].drawTo(window);
             }
             else {
@@ -839,17 +825,15 @@ void level4Boss(RenderWindow& window, int& levels, Spaceship& spaceship, vector<
             hearts[i].drawTo(window);
         }
         if (heart <= 0) {
-         revive.SetHealth(heart);
-            if(heart<=0)
-            {
+            revive.SetHealth(heart);
+            if (heart <= 0) {
                 return;
             }
-            else{
-                  continue;
+            else {
+                continue;
             }
         }
-        if(gameSound.getElapsedTime().asSeconds()>GameSound.getBuffer()->getDuration().asSeconds())
-        {
+        if (gameSound.getElapsedTime().asSeconds() > GameSound.getBuffer()->getDuration().asSeconds()) {
             GameSound.play();
             gameSound.restart();
         }

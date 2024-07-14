@@ -24,7 +24,7 @@ void writeToLine(string filename, int lineNumber, string newContent) {
 void settingsScreen(RenderWindow& window,Sound &sound) {
     window.setFramerateLimit(30);
     Font font;
-    Picture checkMark("checkmark.png");
+    Picture checkMark("pictures/checkmark.png");
     ifstream file("settings.txt");
     int difficultySelected, frameRateSelected;
     bool soundEnabled;
@@ -37,7 +37,7 @@ void settingsScreen(RenderWindow& window,Sound &sound) {
     string options[3];
     
     Texture settingsBg;
-    if (!settingsBg.loadFromFile("bgspace.png")) {
+    if (!settingsBg.loadFromFile("pictures/bgspace.png")) {
         cout << "Failed to load background texture!" << endl;
         return;
     }

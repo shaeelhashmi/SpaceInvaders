@@ -7,23 +7,23 @@ using namespace sf;
 void game(RenderWindow& window, string username) {
     Spaceship spaceship(window);
     //This is for playing a sound when the bullet is shot
-    Revive revive(window, "Revive.png");
-    SpeedBoost speedboost(window, "Speed.png");
-    HealthRegen healthregen(window, "hearts.png");
+    Revive revive(window, "pictures/Revive.png");
+    SpeedBoost speedboost(window, "pictures/Speed.png");
+    HealthRegen healthregen(window, "pictures/hearts.png");
 
     Bullets bullet(window, "bullets.png");
-    Picture hearts[5] = { Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png"), Picture("hearts.png") };
+    Picture hearts[5] = { Picture("pictures/hearts.png"), Picture("pictures/hearts.png"), Picture("pictures/hearts.png"), Picture("pictures/hearts.png"), Picture("pictures/hearts.png") };
 
     int levels = 1;
     int shootedAsteroids = 0;
     string settings[3];
     Clock clock;
-    Asteroid as(window, "Asteroid.png", spaceship.getSize().x);
-    SpecialAsteroid specialAst(window, "SpecialAsteroid.png");
+    Asteroid as(window, "pictures/Asteroid.png", spaceship.getSize().x);
+    SpecialAsteroid specialAst(window, "pictures/SpecialAsteroid.png");
     // The clock for the multiplier to end
     Clock endMultiplier;
     Clock asteroidClock;
-    Boss b1(window, "Spaceship.png");
+    Boss b1(window, "pictures/Spaceship.png");
     vector<Bullets> bullets;
     vector<Asteroid> asteroids;
     // This array will store the exploded array
@@ -35,7 +35,7 @@ void game(RenderWindow& window, string username) {
 
     Texture gameBg;
     Sprite gameSP;
-    gameBg.loadFromFile("SpaceBg.png");
+    gameBg.loadFromFile("pictures/SpaceBg.png");
     gameSP.setTexture(gameBg);
 
     bool changelevel = false;
@@ -252,7 +252,7 @@ window.setFramerateLimit(stoi(settings[2]));
             }
         }
         for (int i = 0; i < asteroids.size(); i++) {
-            asteroids[i].SetTexture("Asteroid.png");
+            asteroids[i].SetTexture("pictures/Asteroid.png");
             asteroids[i].move(window, levels, settings[1]);
             asteroids[i].drawTo(window);
             if (spaceship.getGlobalBounds().intersects(asteroids[i].getGlobalBounds())) {
@@ -271,7 +271,7 @@ window.setFramerateLimit(stoi(settings[2]));
                     {
                         Clock c;
                      asteroidSound.play();
-                    asteroids[i].SetTexture("AsteroidDestructions.png");
+                     asteroids[i].SetTexture("pictures/AsteroidDestructions.png");
                     explodedAsteroids.push_back(asteroids[i]);
                     explodedAsteroidsTime.push_back(c);
                     int asteroidSize = asteroids[i].getSizeValue();
@@ -312,7 +312,7 @@ window.setFramerateLimit(stoi(settings[2]));
                 explodedAsteroidsTime.erase(explodedAsteroidsTime.begin() + i);
             }
             else {
-                explodedAsteroids[i].SetTexture("AsteroidDestructions.png");
+                explodedAsteroids[i].SetTexture("pictures/AsteroidDestructions.png");
                 explodedAsteroids[i].drawTo(window);
             }
         }

@@ -169,7 +169,7 @@ class Spaceship {
     Picture spaceship;
 
     public:
-    Spaceship(RenderWindow& window) : spaceship("Spaceship.png") {
+    Spaceship(RenderWindow& window) : spaceship("pictures/Spaceship.png") {
         spaceship.setScale(Vector2f(window.getSize().x * 0.082, window.getSize().y * 0.134));
         spaceship.setPosition(Vector2f((window.getSize().x / 2) - 100, window.getSize().y - 115));
     }
@@ -566,7 +566,7 @@ bool GameOver(RenderWindow& window,int score) {
     Text GameOver;
 
      Texture GO;
-    if (!GO.loadFromFile("GameO.png")) {
+     if (!GO.loadFromFile("pictures/GameO.png")) {
         window.close();
     }
     Sprite GameO;
