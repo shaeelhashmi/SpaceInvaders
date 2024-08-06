@@ -53,7 +53,7 @@ cd Spaceshipgame-SFML
 * Execute the mainmenu.cpp file.
 * If you are using any linux distribution follow these steps:
    * Go the project directory.
-   * In the terminal right the following commands:
+   * In the terminal write the following commands:
        * ```
          g++ mainmenu.cpp -o myprog -lsfml-system -lsfml-graphics -lsfml-window -lsfml-audio.
          ```
