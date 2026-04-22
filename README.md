@@ -32,6 +32,7 @@ This is a space shooter game made using the C++ framework SFML, implementing the
 * [Shaeel Hashmi](https://github.com/shaeelhashmi)
 ## Roles:
 * <b><u>Shaeel Hashmi</u></b> - All features of Boss fights, HighScore screen, Spaceship control and Revive Powerup.
+* <b><u>Sarim Shakeel</u></b> - Features of Asteroids, gameplay text and background.
 ## Getting Started:
 ### Prerequistes:
 * A C++ compiler like g++
